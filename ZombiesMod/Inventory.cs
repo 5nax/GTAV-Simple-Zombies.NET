@@ -105,6 +105,48 @@ public class Inventory
 				new CraftableItemComponent(inventoryItemBase, 1)
 			}
 		};
+		UsableInventoryItem leatherArmor = new UsableInventoryItem(0, 5, "Leather Armor", "Tanned hides stitched into protective body armor.", new UsableItemEvent[1]
+		{
+			new UsableItemEvent(ItemEvent.GiveArmor, 100)
+		})
+		{
+			RequiredComponents = new CraftableItemComponent[3]
+			{
+				new CraftableItemComponent(animalHide, 3),
+				new CraftableItemComponent(inventoryItemBase3, 2),
+				new CraftableItemComponent(inventoryItemBase5, 2)
+			}
+		};
+		UsableInventoryItem medkit = new UsableInventoryItem(0, 5, "Medkit", "Field medical kit — restores full health and stops bleeding.", new UsableItemEvent[2]
+		{
+			new UsableItemEvent(ItemEvent.GiveHealth, 100),
+			new UsableItemEvent(ItemEvent.StopBleeding, 0)
+		})
+		{
+			RequiredComponents = new CraftableItemComponent[3]
+			{
+				new CraftableItemComponent(inventoryItemBase5, 3),
+				new CraftableItemComponent(inventoryItemBase, 2),
+				new CraftableItemComponent(inventoryItemBase3, 1)
+			}
+		};
+		WeaponInventoryItem pipeBomb = new WeaponInventoryItem(0, 10, "Pipe Bomb", "An improvised fragmentation explosive.", 1, WeaponHash.PipeBomb, null)
+		{
+			RequiredComponents = new CraftableItemComponent[3]
+			{
+				new CraftableItemComponent(inventoryItemBase7, 2),
+				new CraftableItemComponent(inventoryItemBase2, 1),
+				new CraftableItemComponent(inventoryItemBase12, 1)
+			}
+		};
+		FoodInventoryItem jerky = new FoodInventoryItem(0, 15, "Jerky", "Dried meat that keeps. Restores hunger — no campfire needed.", "mp_player_inteat@burger", "mp_player_int_eat_burger", AnimationFlags.UpperBodyOnly, -1, FoodType.Food, 0.3f)
+		{
+			RequiredComponents = new CraftableItemComponent[2]
+			{
+				new CraftableItemComponent(inventoryItemBase10, 2),
+				new CraftableItemComponent(inventoryItemBase11, 1)
+			}
+		};
 		CraftableInventoryItem craftableInventoryItem = new CraftableInventoryItem(0, 5, "Suppressor", "Can be used to suppress a rifle, pistol, shotgun, or SMG.", delegate
 		{
 			GTA.Weapon current = PlayerPed.Weapons.Current;
@@ -273,10 +315,11 @@ public class Inventory
 				new CraftableItemComponent(inventoryItemBase3, 2)
 			}
 		};
-		Items.AddRange(new InventoryItemBase[19]
+		Items.AddRange(new InventoryItemBase[23]
 		{
-			usableInventoryItem, antidote, fuelCan, weaponInventoryItem, weaponInventoryItem2, weaponInventoryItem3, foodInventoryItem, foodInventoryItem2, foodInventoryItem3, buildableInventoryItem4,
-			buildableInventoryItem5, buildableInventoryItem6, buildableInventoryItem7, buildableInventoryItem8, craftableInventoryItem, buildableInventoryItem3, buildableInventoryItem, buildableInventoryItem2, craftableInventoryItem2
+			usableInventoryItem, antidote, fuelCan, leatherArmor, medkit, pipeBomb, jerky, weaponInventoryItem, weaponInventoryItem2, weaponInventoryItem3,
+			foodInventoryItem, foodInventoryItem2, foodInventoryItem3, buildableInventoryItem4, buildableInventoryItem5, buildableInventoryItem6, buildableInventoryItem7, buildableInventoryItem8, craftableInventoryItem, buildableInventoryItem3,
+			buildableInventoryItem, buildableInventoryItem2, craftableInventoryItem2
 		});
 		Resources.AddRange(new InventoryItemBase[14]
 		{
