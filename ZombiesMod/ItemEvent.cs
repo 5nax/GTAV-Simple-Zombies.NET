@@ -4,5 +4,6 @@ public enum ItemEvent
 {
 	None,
 	GiveArmor,
-	GiveHealth
+	GiveHealth,
+	CureInfection
 }

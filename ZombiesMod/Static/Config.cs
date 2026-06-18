@@ -5,7 +5,7 @@ namespace ZombiesMod.Static;
 
 public class Config
 {
-	public static string VersionId = "1.0.2d";
+	public static string VersionId = "2.0.0-enhanced";
 
 	public const string ScriptFilePath = "./scripts/";
 

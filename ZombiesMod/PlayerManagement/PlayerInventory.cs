@@ -267,6 +267,12 @@ public class PlayerInventory : Script
 					PlayerPed.Health += num;
 					break;
 				}
+				case ItemEvent.CureInfection:
+				{
+					int amount = (usableItemEvent.EventArgument as int?) ?? 100;
+					PlayerInfection.Instance?.Cure(amount);
+					break;
+				}
 				}
 			}
 		}

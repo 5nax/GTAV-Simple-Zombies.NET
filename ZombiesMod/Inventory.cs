@@ -79,6 +79,18 @@ public class Inventory
 				new CraftableItemComponent(inventoryItemBase5, 2)
 			}
 		};
+		UsableInventoryItem antidote = new UsableInventoryItem(0, 5, "Antidote", "Cures the zombie infection. Craft from alcohol, binding and a battery.", new UsableItemEvent[1]
+		{
+			new UsableItemEvent(ItemEvent.CureInfection, 100)
+		})
+		{
+			RequiredComponents = new CraftableItemComponent[3]
+			{
+				new CraftableItemComponent(inventoryItemBase, 2),
+				new CraftableItemComponent(inventoryItemBase3, 1),
+				new CraftableItemComponent(inventoryItemBase2, 1)
+			}
+		};
 		CraftableInventoryItem craftableInventoryItem = new CraftableInventoryItem(0, 5, "Suppressor", "Can be used to suppress a rifle, pistol, shotgun, or SMG.", delegate
 		{
 			GTA.Weapon current = PlayerPed.Weapons.Current;
@@ -247,10 +259,10 @@ public class Inventory
 				new CraftableItemComponent(inventoryItemBase3, 2)
 			}
 		};
-		Items.AddRange(new InventoryItemBase[17]
+		Items.AddRange(new InventoryItemBase[18]
 		{
-			usableInventoryItem, weaponInventoryItem, weaponInventoryItem2, weaponInventoryItem3, foodInventoryItem, foodInventoryItem2, foodInventoryItem3, buildableInventoryItem4, buildableInventoryItem5, buildableInventoryItem6,
-			buildableInventoryItem7, buildableInventoryItem8, craftableInventoryItem, buildableInventoryItem3, buildableInventoryItem, buildableInventoryItem2, craftableInventoryItem2
+			usableInventoryItem, antidote, weaponInventoryItem, weaponInventoryItem2, weaponInventoryItem3, foodInventoryItem, foodInventoryItem2, foodInventoryItem3, buildableInventoryItem4, buildableInventoryItem5,
+			buildableInventoryItem6, buildableInventoryItem7, buildableInventoryItem8, craftableInventoryItem, buildableInventoryItem3, buildableInventoryItem, buildableInventoryItem2, craftableInventoryItem2
 		});
 		Resources.AddRange(new InventoryItemBase[13]
 		{
