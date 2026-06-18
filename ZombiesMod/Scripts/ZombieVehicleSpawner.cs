@@ -47,6 +47,20 @@ public class ZombieVehicleSpawner : Script, ISpawner
 
 	public SpawnBlocker SpawnBlocker { get; } = new SpawnBlocker();
 
+	// Default health applied to spawned zombies, exposed so other systems (hordes,
+	// infection spread) create consistent zombies.
+	public int DefaultZombieHealth => _zombieHealth;
+
+	// Register an externally-created zombie so it is counted, pruned, and cleared
+	// with the rest (used by HordeController and infection-spread).
+	public void AddManagedZombie(Ped zombiePed)
+	{
+		if (zombiePed != null)
+		{
+			_peds.Add(zombiePed);
+		}
+	}
+
 	private static Ped PlayerPed => Database.PlayerPed;
 
 	private static Vector3 PlayerPosition => Database.PlayerPosition;

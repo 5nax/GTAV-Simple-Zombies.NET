@@ -204,7 +204,10 @@ public abstract class ZombiePed : IEquatable<Ped>
 		if (!target.IsPlayer && target.Health <= target.MaxHealth / 4)
 		{
 			target.SetToRagdoll(3000);
-			ZombieCreator.InfectPed(target, MaxHealth, overrideAsFastZombie: true);
+			// Register the newly-infected zombie so it's tracked/cleaned with the rest
+			// (previously the return was dropped and these escaped ClearAll).
+			ZombiePed infected = ZombieCreator.InfectPed(target, MaxHealth, overrideAsFastZombie: true);
+			ZombieVehicleSpawner.Instance.AddManagedZombie(infected);
 			ForgetTarget();
 			target.LeaveGroup();
 			target.Weapons.Drop();
