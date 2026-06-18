@@ -1,32 +1,22 @@
-# Prerequisites
-*.d
+# .NET build output
+bin/
+obj/
+*.user
+*.suo
+.vs/
+*.pdb
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# NuGet
+*.nupkg
+.nuget/
 
-# Precompiled Headers
-*.gch
-*.pch
+# OS
+.DS_Store
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
+# Build artifacts in general
 *.exe
 *.out
 *.app
+
+# Third-party reference assemblies (libs/) ARE committed so the project builds
+# out of the box; they are explicitly force-added.
