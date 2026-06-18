@@ -3,6 +3,41 @@
 Chronological summary of the modernization. Each bullet maps to a commit on the
 `enhanced-port` branch.
 
+## 3.0 — Survival overhaul (tense, realistic, TLOU-style)
+
+Re-pitched from arcade hordes toward scarce, deadly, sound-driven survival.
+
+**Realism rebalance** — far fewer zombies near you (cap 14 vs 30), mostly slow
+shamblers (runners rare, a few more at night), tuned sensing/vision; ambient hordes
+**off by default** and blood moons rare. All density/health/behavior knobs live in
+`[zombies]`/`[variants]`.
+
+**Sound & stealth** (`NoiseController`) — unsuppressed gunfire carries far and pulls
+nearby walkers to the shot; sprinting makes a smaller racket; suppressors + moving
+quietly keep you hidden. Firefights are a last resort. (`[stealth]`)
+
+**Blind Stalker** — a clicker-style zombie that hunts by **sound only** (new `CanSee`
+AI hook). Sneak past it; make noise and it charges. Hits harder than a walker.
+
+**Hunting** — animals are now skittish **prey** that flee when approached and die to a
+clean shot, dropping **Animal Hide** + meat when skinned. Shooting them is loud, so
+hunting is risk/reward. (`[hunting]`)
+
+**Injury / bleeding** (`PlayerBleeding`) — a zombie hit can open a bleeding wound
+(HUD warning) that drains health until you use a Bandage/Medkit. (`[bleeding]`)
+
+**Deeper crafting** — new items: **Leather Armor** (hides → +armor), **Medkit** (full
+heal + stops bleeding), **Pipe Bomb**, **Jerky** (preserved food), plus the **Animal
+Hide** resource. Bandage now also stops bleeding.
+
+**Dedicated crafting UI** (`CraftingMenu`, default key **K**) — a categorized workshop
+(Medical & Gear / Weapons / Building / Food / Tools); every recipe shows its component
+cost with have/need colouring and a craftable tick; activating crafts and refreshes.
+
+Version bumped to `3.0.0-survival` (re-seeds the inventory with the new items).
+
+---
+
 ## 2.0 — Content expansion (more variety & dynamism)
 
 New, INI-tunable systems (all gated in `[section]`s of `ZombiesMod.ini` and most

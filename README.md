@@ -35,25 +35,35 @@ Legacy**, via [ScriptHookVDotNetEnhanced](https://github.com/Chiheb-Bacha/Script
 
 ---
 
-## Gameplay features (2.0 expansion)
+## Gameplay (3.0 — survival overhaul)
 
-On top of the original looting/crafting/base-building/survival loop:
+Tuned for tense, realistic survival (think *The Last of Us*) rather than arcade hordes:
+the dead are **scarce, slow and deadly**, sound is your biggest enemy, and supplies matter.
 
-- **7 zombie types** — Walkers & Runners plus **Brute** (tanky, knockdown), **Crawler**
-  (fast/fragile), **Bloater** (explodes on death), **Spitter** (ranged), and **Screamer**
-  (summons reinforcements).
-- **Dynamic threats** — periodic **hordes** that converge on you, random **blood-moon
-  nights** (everything sprints, doubled spawns), and screamer reinforcement waves.
-- **Player infection** — bites can infect you; the meter climbs and turns you at 100%.
-  Craft an **Antidote** to cure it.
-- **Progression** — kill counter, **days survived**, **XP/levels** with **max-health
-  perks**, and a HUD; saved across sessions.
-- **Vehicle fuel** — fuel drains as you drive (HUD + dashboard gauge); refuel at gas
-  pumps or with a craftable **Fuel Can**; the engine dies when empty.
-- **Headshots** are lethal critical hits; **downed survivors can be revived** and
-  recruited; distant corpses are cleaned up for performance.
-- **Everything is tunable** in `scripts/ZombiesMod.ini` (`[variants] [infection]
-  [hordes] [progression] [fuel] [combat]`) and the main systems toggle in the menu.
+**The dead**
+- **8 zombie types** — mostly slow **Walkers**; rare **Runners**; plus **Brute** (tanky,
+  knockdown), **Crawler** (fast/fragile), **Bloater** (explodes), **Spitter** (ranged),
+  **Screamer** (calls others), and the blind **Stalker** that hunts by *sound only*.
+- **Stealth matters** — unsuppressed gunfire pulls walkers from far away; sprinting is
+  loud; suppressors and moving quietly keep you alive. Hordes are **off by default**;
+  blood moons are rare.
+
+**Survival**
+- **Hunting** — stalk skittish wildlife (they flee) and skin them for meat + **hides**.
+- **Infection** — bites can infect you (HUD meter); cure with a crafted **Antidote**.
+- **Bleeding** — hits can open wounds that drain health until you **Bandage**/**Medkit**.
+- **Hunger / thirst / stamina** survival stats; **vehicle fuel** (refuel at pumps or a
+  **Fuel Can**); **progression** (kills, days survived, XP/levels, perks).
+
+**Crafting**
+- **Dedicated crafting workshop** — press **K**: categorized recipes (Medical & Gear /
+  Weapons / Building / Food / Tools) with live have/need costs and a craftable tick.
+- New craftables: Antidote, Medkit, Leather Armor, Pipe Bomb, Jerky, Fuel Can — on top
+  of the original buildables, weapons, food and base pieces.
+
+**Everything is tunable** in `scripts/ZombiesMod.ini`
+(`[zombies] [variants] [stealth] [bleeding] [hunting] [infection] [hordes] [progression]
+[fuel] [combat]`); the main systems also toggle in the menu.
 
 ## Installation (players)
 
@@ -81,6 +91,7 @@ to `scripts\ZombiesModCrashLog.txt`.
 ### Default keys (editable in `ZombiesMod.ini`)
 - **F10** — open the Simple Zombies menu (`zombies_menu_key`)
 - **I** — open the inventory (`inventory_key`)
+- **K** — open the crafting workshop (`crafting_key`)
 
 Toggle **Infection Mode** in the menu to start the apocalypse.
 
