@@ -50,6 +50,9 @@ public class Runner : ZombiePed
 
 	public override void OnGoToTarget(Ped target)
 	{
+		// Re-arm the leap each time the runner resumes chasing, so it can leap more
+		// than once in its lifetime (the flag was set true and never reset).
+		_jumpAttack = false;
 		Function.Call((Hash)0x6A071245EB0D1882uL, new InputArgument[7] { _ped.Handle, target.Handle, -1, 0f, 5f, 1073741824, 0 });
 	}
 }

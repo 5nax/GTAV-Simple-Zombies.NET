@@ -115,7 +115,8 @@ public static class Database
 			return VehicleHash.Adder;
 		}
 		VehicleHash[] array = source.Where((VehicleHash h) => VehicleExtended.GetModelClass(h) == vClass).ToArray();
-		return array[Random.Next(array.Length)];
+		// Guard against a class with no matching hashes (IndexOutOfRange on array[Random.Next(0)]).
+		return (array.Length > 0) ? array[Random.Next(array.Length)] : VehicleHash.Adder;
 	}
 
 	public static Model GetRandomVehicleModel()

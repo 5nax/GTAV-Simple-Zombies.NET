@@ -145,6 +145,7 @@ public abstract class ZombiePed : IEquatable<Ped>
 		if (Position.VDist(Database.PlayerPosition) > 120f && (!_ped.IsOnScreen || _ped.IsDead))
 		{
 			Delete();
+			return;
 		}
 		if (PlayAudio && _ped.IsRunning)
 		{

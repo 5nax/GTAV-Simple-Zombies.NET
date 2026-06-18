@@ -95,11 +95,19 @@ public class AnimalSpawner : Script, ISpawner
 	private List<Ped> CreateAnimals(Blip blip)
 	{
 		List<Ped> list = new List<Ped>();
-		int num = Database.Random.Next(3, 10);
+		int num = Database.Random.Next(3, MaxAnimalsPerSpawn + 1);
 		PedHash pedHash = _possibleAnimals[Database.Random.Next(_possibleAnimals.Length)];
+		// Request the model up-front; without this CreatePed returns null until the
+		// model streams in, so herds were often empty/undersized.
+		Model model = new Model(pedHash);
+		model.Request(1000);
+		if (!model.IsLoaded)
+		{
+			return list;
+		}
 		for (int i = 0; i < num; i++)
 		{
-			Ped ped = World.CreatePed(pedHash, blip.Position.Around(5f));
+			Ped ped = World.CreatePed(model, blip.Position.Around(5f));
 			if (!(ped == null))
 			{
 				list.Add(ped);
