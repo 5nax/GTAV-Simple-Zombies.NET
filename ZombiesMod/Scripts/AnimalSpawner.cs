@@ -30,6 +30,8 @@ public class AnimalSpawner : Script, ISpawner
 
 	private Dictionary<Blip, List<Ped>> _spawnMap = new Dictionary<Blip, List<Ped>>();
 
+	private int _nextFleeTime;
+
 	public static AnimalSpawner Instance { get; private set; }
 
 	public bool Spawn { get; set; }
@@ -76,6 +78,7 @@ public class AnimalSpawner : Script, ISpawner
 					}
 				}
 			}
+			TryFleeFromPlayer();
 			_spawnMap = _spawnMap.Where(delegate(KeyValuePair<Blip, List<Ped>> keyValuePair)
 			{
 				if (keyValuePair.Value.Count != 0)
@@ -89,6 +92,29 @@ public class AnimalSpawner : Script, ISpawner
 		else
 		{
 			Clear();
+		}
+	}
+
+	// Skittish prey: animals bolt when the player gets close, so you must stalk and
+	// shoot (which then makes noise that draws the dead — risk/reward hunting).
+	private void TryFleeFromPlayer()
+	{
+		if (!GameConfig.HuntingEnabled || Game.GameTime < _nextFleeTime)
+		{
+			return;
+		}
+		_nextFleeTime = Game.GameTime + 2000;
+		Vector3 playerPos = Database.PlayerPosition;
+		foreach (KeyValuePair<Blip, List<Ped>> kv in _spawnMap)
+		{
+			foreach (Ped animal in kv.Value)
+			{
+				if (animal != null && animal.Exists() && !animal.IsDead
+					&& animal.Position.VDist(playerPos) < 30f)
+				{
+					animal.Task.FleeFrom(Database.PlayerPed);
+				}
+			}
 		}
 	}
 
@@ -113,7 +139,8 @@ public class AnimalSpawner : Script, ISpawner
 				list.Add(ped);
 				ped.Task.WanderAround();
 				ped.IsPersistent = true;
-				Relationships.SetRelationshipBothWays(Relationship.Hate, Relationships.PlayerRelationship, ped.RelationshipGroup);
+				// Prey, not enemies: skittish wildlife that flees and dies to a clean shot.
+				ped.CanSufferCriticalHits = true;
 			}
 		}
 		return list;

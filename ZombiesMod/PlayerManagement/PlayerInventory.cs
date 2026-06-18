@@ -148,7 +148,8 @@ public class PlayerInventory : Script
 		else if (_inventory.AddItem(ItemFromName("Raw Meat"), 2, ItemType.Resource))
 		{
 			PlayerPed.Weapons.Select(WeaponHash.Knife, equipNow: true);
-			Notifier.Show("You gutted the animal for ~g~raw meat~s~.");
+			_inventory.AddItem(ItemFromName("Animal Hide"), 1, ItemType.Resource);
+			Notifier.Show("You skinned the animal for ~g~raw meat~s~ and a ~g~hide~s~.");
 			PlayerPed.Task.PlayAnimation("amb@world_human_gardener_plant@male@base", "base", 8f, 3000, AnimationFlags.None);
 			_lootedPeds.Add(ped);
 		}

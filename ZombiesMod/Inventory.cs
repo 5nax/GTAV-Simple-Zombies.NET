@@ -66,6 +66,7 @@ public class Inventory
 		InventoryItemBase inventoryItemBase11 = new InventoryItemBase(0, 10, "Matches", "Can be used to create fire.");
 		InventoryItemBase inventoryItemBase12 = new InventoryItemBase(25, 25, "Weapon Parts", "Used to create weapon components, and weapons. (Weapons crafting coming soon)");
 		InventoryItemBase inventoryItemBase13 = new InventoryItemBase(0, 25, "Vehicle Parts", "USed to repair vehicles.");
+		InventoryItemBase animalHide = new InventoryItemBase(0, 25, "Animal Hide", "Skinned from hunted wildlife. Tans into leather for armor and gear.");
 		UsableInventoryItem usableInventoryItem = new UsableInventoryItem(0, 10, "Bandage", "A strip of material used to bind a wound. Restores some health and stops bleeding.", new UsableItemEvent[3]
 		{
 			new UsableItemEvent(ItemEvent.GiveHealth, 25),
@@ -277,10 +278,10 @@ public class Inventory
 			usableInventoryItem, antidote, fuelCan, weaponInventoryItem, weaponInventoryItem2, weaponInventoryItem3, foodInventoryItem, foodInventoryItem2, foodInventoryItem3, buildableInventoryItem4,
 			buildableInventoryItem5, buildableInventoryItem6, buildableInventoryItem7, buildableInventoryItem8, craftableInventoryItem, buildableInventoryItem3, buildableInventoryItem, buildableInventoryItem2, craftableInventoryItem2
 		});
-		Resources.AddRange(new InventoryItemBase[13]
+		Resources.AddRange(new InventoryItemBase[14]
 		{
 			inventoryItemBase3, inventoryItemBase, inventoryItemBase5, inventoryItemBase4, inventoryItemBase7, inventoryItemBase8, inventoryItemBase2, inventoryItemBase9, inventoryItemBase10, inventoryItemBase6,
-			inventoryItemBase11, inventoryItemBase12, inventoryItemBase13
+			inventoryItemBase11, inventoryItemBase12, inventoryItemBase13, animalHide
 		});
 		Items.Sort((InventoryItemBase c1, InventoryItemBase c2) => string.Compare(c1.Id, c2.Id, StringComparison.Ordinal));
 		Resources.Sort((InventoryItemBase c1, InventoryItemBase c2) => string.Compare(c1.Id, c2.Id, StringComparison.Ordinal));
