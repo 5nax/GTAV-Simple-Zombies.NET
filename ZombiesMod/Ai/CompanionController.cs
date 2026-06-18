@@ -113,6 +113,34 @@ public class CompanionController : Script
 			_nextFendTick = Game.GameTime + 3000;
 			FendForThemselves();
 		}
+
+		MaybeBark();
+	}
+
+	// Unprompted in-character chatter so companions feel alive — throttled per companion
+	// and only when they're near you, so it stays cheap and relevant.
+	private void MaybeBark()
+	{
+		AiCompanion c = _companions.FirstOrDefault((AiCompanion x) =>
+			!x.Thinking && Game.GameTime >= x.NextBarkTime
+			&& x.Ped != null && x.Ped.Exists() && !x.Ped.IsDead
+			&& x.Ped.Position.DistanceTo(PlayerPed.Position) < 25f);
+		if (c == null)
+		{
+			return;
+		}
+		c.NextBarkTime = Game.GameTime + (int)(GameConfig.AiBarkIntervalSeconds * 1000f) + Database.Random.Next(0, 20000);
+		c.Thinking = true;
+		string system = BuildSystemPrompt(c)
+			+ " This is an unprompted moment: say ONE brief, natural line reacting to the current situation "
+			+ "(a warning, a worry, a quip). Keep action \"none\" unless immediate danger demands otherwise.";
+		string context = BuildContext(c, "(no direct order — just react to the moment out loud)");
+		AiCompanion captured = c;
+		Task.Run(async delegate
+		{
+			string json = await GeminiClient.GenerateAsync(system, context).ConfigureAwait(false);
+			_results.Enqueue(new AiResult { Companion = captured, Decision = GeminiClient.ParseDecision(json) });
+		});
 	}
 
 	private void HandleVoiceWindow()
@@ -194,6 +222,7 @@ public class CompanionController : Script
 		string name = Names[Database.Random.Next(Names.Length)];
 		string persona = Personas[Database.Random.Next(Personas.Length)];
 		AiCompanion comp = new AiCompanion(near, name, persona);
+		comp.NextBarkTime = Game.GameTime + (int)(GameConfig.AiBarkIntervalSeconds * 1000f);
 		near.Recruit(player);
 		near.IsPersistent = true;
 		_companions.Add(comp);
