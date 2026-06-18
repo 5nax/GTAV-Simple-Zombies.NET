@@ -131,9 +131,23 @@ public abstract class ZombiePed : IEquatable<Ped>
 
 	public abstract void OnGoToTarget(Ped target);
 
+	// Fired once whenever any zombie dies (progression/stats subscribe to this).
+	public static event Action<Ped> Killed;
+
+	// Distance at which this zombie switches from chasing to attacking. Variants
+	// (e.g. the ranged Spitter) override this.
+	public virtual float AttackDistance => AttackRange;
+
+	// Hook for variant-specific death behavior (e.g. the Bloater explosion).
+	protected virtual void OnZombieDied()
+	{
+	}
+
 	private void OnDied(EntityEventWrapper sender, Entity entity)
 	{
 		_ped.AttachedBlip?.Delete();
+		OnZombieDied();
+		ZombiePed.Killed?.Invoke(_ped);
 		if (ZombieVehicleSpawner.Instance.IsInvalidZone(entity.Position) && ZombieVehicleSpawner.Instance.IsValidSpawn(entity.Position))
 		{
 			ZombieVehicleSpawner.Instance.SpawnBlocker.Add(entity.Position);
@@ -167,7 +181,7 @@ public abstract class ZombiePed : IEquatable<Ped>
 		if (!(Target == null))
 		{
 			float num = Position.VDist(Target.Position);
-			if (num > AttackRange)
+			if (num > AttackDistance)
 			{
 				AttackingTarget = false;
 				GoingToTarget = true;

@@ -35,6 +35,42 @@ public static class ZombieCreator
 		ped.AttachedBlip?.Delete();
 		ped.IsPersistent = true;
 		ped.RelationshipGroup = Relationships.InfectedRelationship;
+
+		// --- Special variants add variety; rolled before the runner/walker split. ---
+		double special = Database.Random.NextDouble();
+		if (special < GameConfig.BruteChance)
+		{
+			int big = health * 3;
+			ped.MaxHealth = big;
+			ped.Health = big;
+			return new Brute(ped.Handle);
+		}
+		if (special < GameConfig.BruteChance + GameConfig.CrawlerChance)
+		{
+			int low = Math.Max(50, health / 2);
+			ped.MaxHealth = low;
+			ped.Health = low;
+			return new Crawler(ped.Handle);
+		}
+		if (special < GameConfig.BruteChance + GameConfig.CrawlerChance + GameConfig.BloaterChance)
+		{
+			ped.MaxHealth = health;
+			ped.Health = health;
+			return new Bloater(ped.Handle);
+		}
+		if (special < GameConfig.BruteChance + GameConfig.CrawlerChance + GameConfig.BloaterChance + GameConfig.SpitterChance)
+		{
+			ped.MaxHealth = health;
+			ped.Health = health;
+			return new Spitter(ped.Handle);
+		}
+		if (special < GameConfig.BruteChance + GameConfig.CrawlerChance + GameConfig.BloaterChance + GameConfig.SpitterChance + GameConfig.ScreamerChance)
+		{
+			ped.MaxHealth = health;
+			ped.Health = health;
+			return new Screamer(ped.Handle);
+		}
+
 		float num = 0.055f;
 		if (IsNightFall())
 		{
