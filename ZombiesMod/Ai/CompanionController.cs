@@ -298,6 +298,12 @@ public class CompanionController : Script
 			HuntNearestAnimal(ped);
 			c.CurrentOrder = "hunting for food";
 			break;
+		case "build":
+		case "fortify":
+		case "barricade":
+			BuildCover(ped);
+			c.CurrentOrder = "building defenses";
+			break;
 		case "flee":
 		case "retreat":
 			Ped threat = NearestZombie(ped.Position, 40f);
@@ -315,6 +321,19 @@ public class CompanionController : Script
 			break;
 		default:
 			break; // "none"/"talk": no order change
+		}
+	}
+
+	// Drops a piece of cover in front of the companion — a tangible "build" action.
+	private static void BuildCover(Ped ped)
+	{
+		Vector3 spot = ped.Position + ped.ForwardVector * 1.6f;
+		ped.Task.PlayAnimation("amb@world_human_gardener_plant@male@base", "base", 8f, 2500, AnimationFlags.UpperBodyOnly);
+		Prop cover = World.CreateProp("prop_mb_sandblock_02", spot, ped.Heading, dynamic: false, placeOnGround: true);
+		if (cover != null)
+		{
+			cover.IsPositionFrozen = true;
+			cover.IsPersistent = true;
 		}
 	}
 
@@ -364,7 +383,7 @@ public class CompanionController : Script
 			+ "during a zombie apocalypse in Los Santos (the GTA V map). Stay fully in character: have "
 			+ "opinions, fear, humor and loyalty — feel alive. You are aware of your surroundings from the "
 			+ "situation report. Reply ONLY as compact JSON on a single line: "
-			+ "{\"say\":\"<one or two SHORT sentences, spoken aloud>\",\"action\":\"<follow|hold|attack|hunt|flee|wander|none>\",\"target\":\"\"}. "
+			+ "{\"say\":\"<one or two SHORT sentences, spoken aloud>\",\"action\":\"<follow|hold|attack|hunt|build|flee|wander|none>\",\"target\":\"\"}. "
 			+ "Pick the action that best fits what the leader asked and the danger around you. Never narrate the JSON.";
 	}
 
