@@ -66,10 +66,11 @@ public class Inventory
 		InventoryItemBase inventoryItemBase11 = new InventoryItemBase(0, 10, "Matches", "Can be used to create fire.");
 		InventoryItemBase inventoryItemBase12 = new InventoryItemBase(25, 25, "Weapon Parts", "Used to create weapon components, and weapons. (Weapons crafting coming soon)");
 		InventoryItemBase inventoryItemBase13 = new InventoryItemBase(0, 25, "Vehicle Parts", "USed to repair vehicles.");
-		UsableInventoryItem usableInventoryItem = new UsableInventoryItem(0, 10, "Bandage", "A strip of material used to bind a wound or to protect an injured part of the body.", new UsableItemEvent[2]
+		UsableInventoryItem usableInventoryItem = new UsableInventoryItem(0, 10, "Bandage", "A strip of material used to bind a wound. Restores some health and stops bleeding.", new UsableItemEvent[3]
 		{
 			new UsableItemEvent(ItemEvent.GiveHealth, 25),
-			new UsableItemEvent(ItemEvent.GiveArmor, 15)
+			new UsableItemEvent(ItemEvent.GiveArmor, 15),
+			new UsableItemEvent(ItemEvent.StopBleeding, 0)
 		})
 		{
 			RequiredComponents = new CraftableItemComponent[3]

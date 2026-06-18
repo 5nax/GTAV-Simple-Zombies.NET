@@ -279,6 +279,11 @@ public class PlayerInventory : Script
 					VehicleFuel.Instance?.Refuel(fuel);
 					break;
 				}
+				case ItemEvent.StopBleeding:
+				{
+					PlayerBleeding.Instance?.Stop();
+					break;
+				}
 				}
 			}
 		}

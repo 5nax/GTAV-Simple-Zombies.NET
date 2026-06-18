@@ -6,5 +6,6 @@ public enum ItemEvent
 	GiveArmor,
 	GiveHealth,
 	CureInfection,
-	Refuel
+	Refuel,
+	StopBleeding
 }
