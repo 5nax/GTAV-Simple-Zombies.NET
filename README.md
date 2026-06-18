@@ -65,6 +65,37 @@ the dead are **scarce, slow and deadly**, sound is your biggest enemy, and suppl
 (`[zombies] [variants] [stealth] [bleeding] [hunting] [infection] [hordes] [progression]
 [fuel] [combat]`); the main systems also toggle in the menu.
 
+## AI survivor companions (optional — Google Gemini)
+
+Talk to survivors and have them think, speak, and act for themselves. **Off by default**
+— it does nothing until you add an API key.
+
+**Setup**
+1. Get a Gemini API key from [Google AI Studio](https://aistudio.google.com/apikey).
+2. Run the mod once so `scripts/ZombiesMod.ini` is created, then under `[ai]` set:
+   ```ini
+   [ai]
+   enabled = True
+   gemini_api_key = YOUR_KEY_HERE
+   gemini_model = gemini-2.5-flash
+   tts_enabled = True            ; companions speak via Windows TTS
+   voice_input_enabled = False   ; set True for push-to-talk voice commands (needs a mic)
+   ```
+3. In-game, walk up to any survivor and press **B** to type to them (or **V** to speak,
+   if voice input is on). They'll answer out loud and act on it.
+
+**What they do** — they're aware of the situation (zombies nearby, location, time,
+weather, their health, their current order), hold a persona, follow / hold / attack /
+hunt / flee / wander on command, **fend for themselves**, and chime in unprompted.
+
+**Notes**
+- TTS and voice input use **Windows speech (SAPI)** — Windows only; if unavailable the
+  mod simply runs without them.
+- Each conversation/bark is a Gemini API call (you pay per your Google quota); the
+  bark interval is configurable. Zombies do **not** use the API — they use a built-in
+  smarter rule-based brain.
+- Diagnostics are logged to `scripts/ZombiesAi.log`.
+
 ## Installation (players)
 
 1. **ScriptHookV** — install the build matching your game patch from
@@ -92,6 +123,7 @@ to `scripts\ZombiesModCrashLog.txt`.
 - **F10** — open the Simple Zombies menu (`zombies_menu_key`)
 - **I** — open the inventory (`inventory_key`)
 - **K** — open the crafting workshop (`crafting_key`)
+- **B** — talk to the nearest survivor (type), **V** — talk by voice (push-to-talk) *(AI companions)*
 
 Toggle **Infection Mode** in the menu to start the apocalypse.
 

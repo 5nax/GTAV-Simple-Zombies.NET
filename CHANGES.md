@@ -3,6 +3,38 @@
 Chronological summary of the modernization. Each bullet maps to a commit on the
 `enhanced-port` branch.
 
+## 3.1 — AI survivor companions (Google Gemini) + smarter dead
+
+Opt-in, off until you paste a Gemini API key into `[ai]` in the INI. Dormant otherwise.
+
+**Living companions** (`ZombiesMod.Ai`) — walk up to a survivor and talk to them (type
+with the **talk key (B)**, or **voice key (V)** push-to-talk). The companion is sent a
+live situation report — time, weather, zone, its own health, nearby-zombie count and
+distance, its current order, and how far you are — with an in-character persona, and
+replies via **Windows TTS** while executing the action it chooses
+(follow / hold / attack / hunt / flee / wander). They **fend for themselves** (engage
+zombies that get close unless told to hold) and **bark** unprompted in-character lines so
+they feel alive between orders.
+
+- `GeminiClient` — async `generateContent` calls fully off the game thread (results
+  queued for the game thread); JSON via the framework `JavaScriptSerializer`, no extra
+  dependency; never throws into the game.
+- `AiSpeech` — guarded Windows SAPI: `SpeakAsync` TTS + optional push-to-talk dictation.
+  No-ops safely if speech/audio isn't available.
+- New refs: System.Net.Http, System.Web.Extensions, System.Speech. New `[ai]` INI section
+  (`gemini_api_key`, `gemini_model`, `tts_enabled`, `voice_input_enabled`, …) and
+  `companion_talk_key` / `companion_voice_key`.
+
+**Smarter dead** (rule-based, no API) — losing sight of you no longer makes a zombie
+forget instantly; it walks to your **last-known position** and searches before giving up.
+With the sound system, breaking line of sight and going quiet can actually shake them.
+
+> Zombies intentionally use rule-based AI, not the LLM: there can be dozens of them every
+> frame, so an API call each would be slow and costly. The LLM is reserved for your named
+> companions.
+
+---
+
 ## 3.0 — Survival overhaul (tense, realistic, TLOU-style)
 
 Re-pitched from arcade hordes toward scarce, deadly, sound-driven survival.
