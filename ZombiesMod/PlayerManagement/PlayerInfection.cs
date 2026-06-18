@@ -22,6 +22,8 @@ public class PlayerInfection : Script
 
 	private float _damageTimer;
 
+	private int _nextBiteTime;
+
 	private static Ped PlayerPed => Database.PlayerPed;
 
 	public PlayerInfection()
@@ -78,7 +80,7 @@ public class PlayerInfection : Script
 	private void DetectBites()
 	{
 		Ped player = PlayerPed;
-		if (player == null || !player.Exists())
+		if (player == null || !player.Exists() || Game.GameTime < _nextBiteTime)
 		{
 			return;
 		}
@@ -91,7 +93,8 @@ public class PlayerInfection : Script
 		{
 			return;
 		}
-		player.ClearLastDamaged();
+		// Cooldown so a single melee streak rolls once; continued exposure ramps it up.
+		_nextBiteTime = Game.GameTime + 1500;
 		if (Database.Random.Next(100) < GameConfig.InfectionBiteChancePercent)
 		{
 			bool wasClean = Infection <= 0f;
