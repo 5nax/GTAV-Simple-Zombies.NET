@@ -65,11 +65,9 @@ public static class PedExtended
 
 	public static void SetStealthMovement(this Ped ped, bool toggle)
 	{
-		Function.Call((Hash)0x88CBB5CEB96B7BD2uL, new InputArgument[2]
-		{
-			toggle ? 1 : 0,
-			"DEFAULT_ACTION"
-		});
+		// SET_PED_STEALTH_MOVEMENT(ped, toggle, action) — the ped handle was missing,
+		// so the toggle was being interpreted as the ped and the call did nothing useful.
+		Function.Call((Hash)0x88CBB5CEB96B7BD2uL, ped.Handle, toggle ? 1 : 0, "DEFAULT_ACTION");
 	}
 
 	public static bool GetStealthMovement(this Ped ped)

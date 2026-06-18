@@ -50,7 +50,12 @@ public class SurvivorController : Script, ISpawner
 
 	private void OnCreatedSurvivors()
 	{
-		bool flag = Database.Random.NextDouble() <= (double)_survivorSpawnChance;
+		// Honor the configured spawn chance (was computed but discarded, so events
+		// fired every interval regardless of survivor_spawn_chance).
+		if (Database.Random.NextDouble() > (double)_survivorSpawnChance)
+		{
+			return;
+		}
 		EventTypes[] array = (EventTypes[])Enum.GetValues(typeof(EventTypes));
 		EventTypes eventTypes = array[Database.Random.Next(array.Length)];
 		Survivors survivors = null;
@@ -103,21 +108,25 @@ public class SurvivorController : Script, ISpawner
 	{
 		Create();
 		Destroy();
-		_survivors.ForEach(delegate(Survivors s)
+		// Iterate a snapshot: a survivor's Update can complete the event, whose handler
+		// removes it from _survivors (mutation-during-enumeration would otherwise throw).
+		foreach (Survivors s in new List<Survivors>(_survivors))
 		{
 			s.Update();
-		});
+		}
 	}
 
 	private void Destroy()
 	{
 		if (!Spawn)
 		{
-			_survivors.ForEach(delegate(Survivors s)
+			// Snapshot + Clear instead of removing inside ForEach (which threw
+			// InvalidOperationException and only aborted a subset).
+			foreach (Survivors s in new List<Survivors>(_survivors))
 			{
-				_survivors.Remove(s);
 				s.Abort();
-			});
+			}
+			_survivors.Clear();
 			_currentDelayTime = DateTime.UtcNow;
 		}
 	}

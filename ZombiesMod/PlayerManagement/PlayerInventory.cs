@@ -250,13 +250,13 @@ public class PlayerInventory : Script
 				case ItemEvent.GiveArmor:
 				{
 					int num2 = (usableItemEvent.EventArgument as int?) ?? 0;
-					PlayerPed.Health += num2;
+					PlayerPed.Armor += num2;
 					break;
 				}
 				case ItemEvent.GiveHealth:
 				{
 					int num = (usableItemEvent.EventArgument as int?) ?? 0;
-					PlayerPed.Armor += num;
+					PlayerPed.Health += num;
 					break;
 				}
 				}
