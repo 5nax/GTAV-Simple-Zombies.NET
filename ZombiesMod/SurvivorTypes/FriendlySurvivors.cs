@@ -27,7 +27,7 @@ public class FriendlySurvivors : Survivors
 		{
 			_peds.Remove(item);
 			item.LeaveGroup();
-			item.CurrentBlip?.Remove();
+			item.AttachedBlip?.Delete();
 			EntityEventWrapper.Dispose(item);
 		}
 	}
@@ -69,7 +69,7 @@ public class FriendlySurvivors : Survivors
 				entityEventWrapper.Disposed += EventWrapperOnDisposed;
 			}
 		}
-		UI.Notify("~b~Friendly~s~ survivors nearby.", blinking: true);
+		Notifier.Show("~b~Friendly~s~ survivors nearby.", blinking: true);
 	}
 
 	private void EventWrapperOnDisposed(EntityEventWrapper sender, Entity entity)
@@ -83,7 +83,7 @@ public class FriendlySurvivors : Survivors
 	private void EventWrapperOnDied(EntityEventWrapper sender, Entity entity)
 	{
 		_peds.Remove(entity as Ped);
-		entity.CurrentBlip?.Remove();
+		entity.AttachedBlip?.Delete();
 		entity.MarkAsNoLongerNeeded();
 		sender.Dispose();
 	}
@@ -92,7 +92,7 @@ public class FriendlySurvivors : Survivors
 	{
 		_peds.ForEach(delegate(Ped ped)
 		{
-			ped.CurrentBlip?.Remove();
+			ped.AttachedBlip?.Delete();
 			ped.MarkAsNoLongerNeeded();
 			EntityEventWrapper.Dispose(ped);
 		});

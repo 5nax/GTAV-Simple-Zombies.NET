@@ -70,13 +70,13 @@ public class VehicleData : ISpatial, IHandleable, IDeletable
 
 	public bool Exists()
 	{
-		return Function.Call<bool>(GTA.Native.Hash._0x7239B21A38F536BA, new InputArgument[1] { Handle });
+		return Function.Call<bool>((GTA.Native.Hash)0x7239B21A38F536BAuL, new InputArgument[1] { Handle });
 	}
 
 	public unsafe void Delete()
 	{
 		int handle = Handle;
-		Function.Call(GTA.Native.Hash._0xAE3CBE5BF394C9C9, new InputArgument[1] { &handle });
+		Function.Call((GTA.Native.Hash)0xAE3CBE5BF394C9C9uL, new InputArgument[1] { &handle });
 		Handle = handle;
 	}
 }

@@ -62,15 +62,17 @@ public class PlayerMap : Script
 			Model model = item.PropName;
 			if (!model.Request(1000))
 			{
-				UI.Notify($"Tried to request ~y~{item.PropName}~s~ but failed.");
+				Notifier.Show($"Tried to request ~y~{item.PropName}~s~ but failed.");
 				continue;
 			}
 			Vector3 position = item.Position;
-			Prop prop = new Prop(Function.Call<int>(Hash._0x9A294B2138ABB884, new InputArgument[7] { model.Hash, position.X, position.Y, position.Z, 1, 1, false }))
+			Prop prop = (Prop)GTA.Entity.FromHandle(Function.Call<int>((Hash)0x9A294B2138ABB884uL, model.Hash, position.X, position.Y, position.Z, 1, 1, false));
+			if (prop == null)
 			{
-				FreezePosition = !item.IsDoor,
-				Rotation = item.Rotation
-			};
+				continue;
+			}
+			prop.IsPositionFrozen = !item.IsDoor;
+			prop.Rotation = item.Rotation;
 			item.Handle = prop.Handle;
 			if (item.BlipSprite != BlipSprite.Standard)
 			{
@@ -101,7 +103,7 @@ public class PlayerMap : Script
 
 	private void OnTick(object sender, EventArgs eventArgs)
 	{
-		if (_map == null || !_map.Any() || MenuConrtoller.MenuPool.IsAnyMenuOpen())
+		if (_map == null || !_map.Any() || MenuConrtoller.MenuPool.AreAnyVisible)
 		{
 			return;
 		}
@@ -123,7 +125,7 @@ public class PlayerMap : Script
 		{
 			if (flag)
 			{
-				Game.DisableControlThisFrame(2, Control.Context);
+				Game.DisableControlThisFrame(Control.Context);
 			}
 			if (mapProp.Interactable)
 			{
@@ -131,11 +133,11 @@ public class PlayerMap : Script
 			}
 			GameExtended.DisableWeaponWheel();
 			UiExtended.DisplayHelpTextThisFrame(string.Format("{0}", flag ? $"Press ~INPUT_CONTEXT~ to pickup the {mapProp.Id}.\n" : ((!EditMode) ? "You're not in edit mode.\n" : "")) + string.Format("{0}", mapProp.Interactable ? string.Format("Press ~INPUT_ATTACK~ to {0}.", mapProp.IsDoor ? "Lock/Unlock" : "interact") : ""));
-			if (Game.IsDisabledControlJustPressed(2, Control.Attack) && mapProp.Interactable)
+			if (Ctrl.DisabledJustPressed(Control.Attack) && mapProp.Interactable)
 			{
 				PlayerMap.Interacted?.Invoke(mapProp, PlayerInventory.Instance.ItemFromName(mapProp.Id));
 			}
-			if (Game.IsDisabledControlJustPressed(2, Control.Context) && mapProp.CanBePickedUp && PlayerInventory.Instance.PickupItem(PlayerInventory.Instance.ItemFromName(mapProp.Id), ItemType.Item))
+			if (Ctrl.DisabledJustPressed(Control.Context) && mapProp.CanBePickedUp && PlayerInventory.Instance.PickupItem(PlayerInventory.Instance.ItemFromName(mapProp.Id), ItemType.Item))
 			{
 				mapProp.Delete();
 				_map.Remove(mapProp);
@@ -151,9 +153,9 @@ public class PlayerMap : Script
 
 	private static void DisableAttackActions()
 	{
-		Game.DisableControlThisFrame(2, Control.Attack2);
-		Game.DisableControlThisFrame(2, Control.Attack);
-		Game.DisableControlThisFrame(2, Control.Aim);
+		Game.DisableControlThisFrame(Control.Attack2);
+		Game.DisableControlThisFrame(Control.Attack);
+		Game.DisableControlThisFrame(Control.Aim);
 	}
 
 	public void NotifyListChanged()

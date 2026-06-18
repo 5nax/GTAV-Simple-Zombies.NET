@@ -6,7 +6,7 @@ using System.Windows.Forms;
 using GTA;
 using GTA.Math;
 using GTA.Native;
-using NativeUI;
+using LemonUI.Menus;
 using ZombiesMod.DataClasses;
 using ZombiesMod.Extensions;
 using ZombiesMod.Static;
@@ -26,7 +26,7 @@ public class PlayerInventory : Script
 
 	public const float InteractDistance = 1.5f;
 
-	private readonly UIMenu _mainMenu = new UIMenu(string.Empty, "INVENTORY & RESOURCES", new Point(0, -105));
+	private readonly NativeMenu _mainMenu = new NativeMenu(string.Empty, "INVENTORY & RESOURCES");
 
 	private readonly List<Ped> _lootedPeds = new List<Ped>();
 
@@ -69,62 +69,54 @@ public class PlayerInventory : Script
 		_inventory.LoadMenus();
 		Instance = this;
 		MenuConrtoller.MenuPool.Add(_mainMenu);
-		UIResRectangle bannerType = new UIResRectangle();
-		_mainMenu.SetBannerType(bannerType);
-		UIMenuItem uIMenuItem = new UIMenuItem("Inventory");
-		UIMenuItem uIMenuItem2 = new UIMenuItem("Resources");
-		UIMenuCheckboxItem uIMenuCheckboxItem = new UIMenuCheckboxItem("Edit Mode", check: true, "Allow yourself to pickup objects.");
-		uIMenuCheckboxItem.CheckboxEvent += delegate(UIMenuCheckboxItem sender, bool @checked)
+		// Submenu entries for the inventory and resource lists (already pooled in LoadMenus).
+		_mainMenu.AddSubMenu(_inventory.InventoryMenu, "Inventory");
+		_mainMenu.AddSubMenu(_inventory.ResourceMenu, "Resources");
+
+		NativeCheckboxItem editMode = new NativeCheckboxItem("Edit Mode", "Allow yourself to pickup objects.", true);
+		editMode.CheckboxChanged += delegate
 		{
-			PlayerMap.Instance.EditMode = @checked;
+			PlayerMap.Instance.EditMode = editMode.Checked;
 		};
-		UIMenuItem uIMenuItem3 = new UIMenuItem("Main Menu", "Navigate to the main menu. (For gamepad users)");
-		uIMenuItem3.Activated += delegate
+		NativeItem mainMenuItem = new NativeItem("Main Menu", "Navigate to the main menu. (For gamepad users)");
+		mainMenuItem.Activated += delegate
 		{
-			MenuConrtoller.MenuPool.CloseAllMenus();
+			_mainMenu.Visible = false;
 			ModController.Instance.MainMenu.Visible = true;
 		};
-		UIMenuCheckboxItem uIMenuCheckboxItem2 = new UIMenuCheckboxItem("Developer Mode", _inventory.DeveloperMode, "Enable/Disable infinite items and resources.");
-		uIMenuCheckboxItem2.CheckboxEvent += delegate(UIMenuCheckboxItem item, bool @checked)
+		NativeCheckboxItem devMode = new NativeCheckboxItem("Developer Mode", "Enable/Disable infinite items and resources.", _inventory.DeveloperMode);
+		devMode.CheckboxChanged += delegate
 		{
-			if (_inventory != null)
+			if (_inventory == null)
 			{
-				if (@checked)
-				{
-					string userInput = Game.GetUserInput(WindowTitle.FMMC_KEY_TIP10, "", 12);
-					if (string.IsNullOrEmpty(userInput) || userInput.ToLower() != "michael")
-					{
-						item.Checked = false;
-						UI.Notify("Hint: Tamara Greenway's husband's first name.");
-						return;
-					}
-				}
-				_inventory.DeveloperMode = @checked;
-				if (!@checked)
-				{
-					_inventory.Items.ForEach(delegate(InventoryItemBase i)
-					{
-						i.Amount = 0;
-					});
-					_inventory.Resources.ForEach(delegate(InventoryItemBase i)
-					{
-						i.Amount = 0;
-					});
-					_inventory.RefreshMenu();
-				}
-				else
-				{
-					UI.Notify("Developer Mode: ~g~Activated~s~");
-				}
-				Serializer.Serialize("./scripts/Inventory.dat", _inventory);
+				return;
 			}
+			if (devMode.Checked)
+			{
+				string userInput = Game.GetUserInput(WindowTitle.FMMC_KEY_TIP10, "", 12);
+				if (string.IsNullOrEmpty(userInput) || userInput.ToLower() != "michael")
+				{
+					devMode.Checked = false;
+					Notifier.Show("Hint: Tamara Greenway's husband's first name.");
+					return;
+				}
+			}
+			_inventory.DeveloperMode = devMode.Checked;
+			if (!devMode.Checked)
+			{
+				_inventory.Items.ForEach(delegate(InventoryItemBase i) { i.Amount = 0; });
+				_inventory.Resources.ForEach(delegate(InventoryItemBase i) { i.Amount = 0; });
+				_inventory.RefreshMenu();
+			}
+			else
+			{
+				Notifier.Show("Developer Mode: ~g~Activated~s~");
+			}
+			Serializer.Serialize("./scripts/Inventory.dat", _inventory);
 		};
-		_mainMenu.AddItem(uIMenuItem);
-		_mainMenu.AddItem(uIMenuItem2);
-		_mainMenu.BindMenuToItem(_inventory.InventoryMenu, uIMenuItem);
-		_mainMenu.BindMenuToItem(_inventory.ResourceMenu, uIMenuItem2);
-		_mainMenu.AddItem(uIMenuCheckboxItem);
-		_mainMenu.AddItem(uIMenuCheckboxItem2);
+		_mainMenu.Add(editMode);
+		_mainMenu.Add(mainMenuItem);
+		_mainMenu.Add(devMode);
 		_inventory.ItemUsed += InventoryOnItemUsed;
 		_inventory.AddedItem += delegate
 		{
@@ -151,12 +143,12 @@ public class PlayerInventory : Script
 	{
 		if (!PlayerPed.Weapons.HasWeapon(WeaponHash.Knife))
 		{
-			UI.Notify("You need a knife!");
+			Notifier.Show("You need a knife!");
 		}
 		else if (_inventory.AddItem(ItemFromName("Raw Meat"), 2, ItemType.Resource))
 		{
 			PlayerPed.Weapons.Select(WeaponHash.Knife, equipNow: true);
-			UI.Notify("You gutted the animal for ~g~raw meat~s~.");
+			Notifier.Show("You gutted the animal for ~g~raw meat~s~.");
 			PlayerPed.Task.PlayAnimation("amb@world_human_gardener_plant@male@base", "base", 8f, 3000, AnimationFlags.None);
 			_lootedPeds.Add(ped);
 		}
@@ -167,7 +159,7 @@ public class PlayerInventory : Script
 		List<InventoryItemBase> list = ((type == ItemType.Resource) ? _inventory.Resources : _inventory.Items);
 		if (list.All((InventoryItemBase r) => r.Amount == r.MaxAmount))
 		{
-			UI.Notify($"Your {type}s are full!");
+			Notifier.Show($"Your {type}s are full!");
 			return;
 		}
 		int amount = 0;
@@ -188,7 +180,7 @@ public class PlayerInventory : Script
 				}
 			}
 		});
-		UI.Notify(string.Format("{0}", (amount > 0) ? $"{type}s: +~g~{amount}" : "Nothing found."), blinking: true);
+		Notifier.Show(string.Format("{0}", (amount > 0) ? $"{type}s: +~g~{amount}" : "Nothing found."), blinking: true);
 		PlayerPed.Task.PlayAnimation("pickup_object", "pickup_low");
 		if (!(ped == null))
 		{
@@ -200,7 +192,7 @@ public class PlayerInventory : Script
 	{
 		//IL_0012: Unknown result type (might be due to invalid IL or missing references)
 		//IL_0018: Unknown result type (might be due to invalid IL or missing references)
-		if (!MenuConrtoller.MenuPool.IsAnyMenuOpen() && keyEventArgs.KeyCode == _inventoryKey)
+		if (!MenuConrtoller.MenuPool.AreAnyVisible && keyEventArgs.KeyCode == _inventoryKey)
 		{
 			_mainMenu.Visible = !_mainMenu.Visible;
 		}
@@ -228,7 +220,7 @@ public class PlayerInventory : Script
 		{
 			if (PlayerPed.IsInVehicle())
 			{
-				UI.Notify("You can't build while in a vehicle!");
+				Notifier.Show("You can't build while in a vehicle!");
 				return;
 			}
 			BuildableInventoryItem buildableInventoryItem = (BuildableInventoryItem)item;
@@ -297,15 +289,15 @@ public class PlayerInventory : Script
 		InventoryItemBase inventoryItemBase = _inventory.Resources.Find((InventoryItemBase i) => i.Id == "Bottle");
 		if (inventoryItemBase != null && inventoryItemBase.Amount > 0)
 		{
-			Game.DisableControlThisFrame(2, Control.Enter);
-			if (Game.IsDisabledControlJustPressed(2, Control.Enter))
+			Game.DisableControlThisFrame(Control.Enter);
+			if (Ctrl.DisabledJustPressed(Control.Enter))
 			{
 				PlayerPed.Task.PlayAnimation("pickup_object", "pickup_low");
 				InventoryItemBase item = ItemFromName("Dirty Water");
 				AddItem(item, 1, ItemType.Resource);
 				AddItem(inventoryItemBase, -1, ItemType.Resource);
-				UI.Notify("Resources: -~r~1", blinking: true);
-				UI.Notify("Resources: +~g~1", blinking: true);
+				Notifier.Show("Resources: -~r~1", blinking: true);
+				Notifier.Show("Resources: +~g~1", blinking: true);
 			}
 		}
 	}
@@ -320,8 +312,8 @@ public class PlayerInventory : Script
 		if (!(closest == null) && closest.IsDead && !_lootedPeds.Contains(closest))
 		{
 			UiExtended.DisplayHelpTextThisFrame("Press ~INPUT_CONTEXT~ to loot.");
-			Game.DisableControlThisFrame(2, Control.Context);
-			if (Game.IsDisabledControlJustPressed(2, Control.Context))
+			Game.DisableControlThisFrame(Control.Context);
+			if (Ctrl.DisabledJustPressed(Control.Context))
 			{
 				PlayerInventory.LootedPed?.Invoke(closest);
 			}

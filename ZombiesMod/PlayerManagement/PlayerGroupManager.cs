@@ -4,7 +4,7 @@ using System.Linq;
 using GTA;
 using GTA.Math;
 using GTA.Native;
-using NativeUI;
+using LemonUI.Menus;
 using ZombiesMod.Extensions;
 using ZombiesMod.Static;
 using ZombiesMod.Wrappers;
@@ -13,7 +13,7 @@ namespace ZombiesMod.PlayerManagement;
 
 public class PlayerGroupManager : Script
 {
-	private readonly UIMenu _pedMenu;
+	private readonly NativeMenu _pedMenu;
 
 	private Ped _selectedPed;
 
@@ -30,32 +30,32 @@ public class PlayerGroupManager : Script
 	public PlayerGroupManager()
 	{
 		Instance = this;
-		_pedMenu = new UIMenu("Guard", "SELECT AN OPTION");
+		_pedMenu = new NativeMenu("Guard", "SELECT AN OPTION");
 		MenuConrtoller.MenuPool.Add(_pedMenu);
-		_pedMenu.OnMenuClose += delegate
+		_pedMenu.Closed += delegate
 		{
 			_selectedPed = null;
 		};
-		UIMenuListItem tasksItem = new UIMenuListItem("Tasks", Enum.GetNames(typeof(PedTask)).Cast<object>().ToList(), 0, "Give peds a specific task to perform.");
+		NativeListItem<string> tasksItem = new NativeListItem<string>("Tasks", "Give peds a specific task to perform.", Enum.GetNames(typeof(PedTask)));
 		tasksItem.Activated += delegate
 		{
 			if (!(_selectedPed == null))
 			{
-				PedTask index = (PedTask)tasksItem.Index;
+				PedTask index = (PedTask)tasksItem.SelectedIndex;
 				SetTask(_selectedPed, index);
 			}
 		};
-		UIMenuItem uIMenuItem = new UIMenuItem("Apply To Nearby", "Apply the selected task to nearby peds within 50 meters.");
+		NativeItem uIMenuItem = new NativeItem("Apply To Nearby", "Apply the selected task to nearby peds within 50 meters.");
 		uIMenuItem.Activated += delegate
 		{
-			PedTask task = (PedTask)tasksItem.Index;
-			List<Ped> list = PlayerPed.CurrentPedGroup.Where((Ped ped) => ped.Position.VDist(PlayerPosition) < 50f).ToList();
+			PedTask task = (PedTask)tasksItem.SelectedIndex;
+			List<Ped> list = PlayerPed.PedGroup.Where((Ped ped) => ped.Position.VDist(PlayerPosition) < 50f).ToList();
 			list.ForEach(delegate(Ped ped)
 			{
 				SetTask(ped, task);
 			});
 		};
-		UIMenuItem uIMenuItem2 = new UIMenuItem("Give Weapon", "Give this ped your current weapon.");
+		NativeItem uIMenuItem2 = new NativeItem("Give Weapon", "Give this ped your current weapon.");
 		uIMenuItem2.Activated += delegate
 		{
 			if (!(_selectedPed == null))
@@ -63,7 +63,7 @@ public class PlayerGroupManager : Script
 				TradeWeapons(PlayerPed, _selectedPed);
 			}
 		};
-		UIMenuItem uIMenuItem3 = new UIMenuItem("Take Weapon", "Take the ped's current weapon.");
+		NativeItem uIMenuItem3 = new NativeItem("Take Weapon", "Take the ped's current weapon.");
 		uIMenuItem3.Activated += delegate
 		{
 			if (!(_selectedPed == null))
@@ -71,23 +71,23 @@ public class PlayerGroupManager : Script
 				TradeWeapons(_selectedPed, PlayerPed);
 			}
 		};
-		UIMenuListItem globalTasks = new UIMenuListItem("Guard Tasks", Enum.GetNames(typeof(PedTask)).Cast<object>().ToList(), 0, "Give all gurads a specific task to perform.");
+		NativeListItem<string> globalTasks = new NativeListItem<string>("Guard Tasks", "Give all guards a specific task to perform.", Enum.GetNames(typeof(PedTask)));
 		globalTasks.Activated += delegate
 		{
-			PedTask task = (PedTask)globalTasks.Index;
-			List<Ped> list = PlayerPed.CurrentPedGroup.ToList();
+			PedTask task = (PedTask)globalTasks.SelectedIndex;
+			List<Ped> list = PlayerPed.PedGroup.ToList();
 			list.ForEach(delegate(Ped ped)
 			{
 				SetTask(ped, task);
 			});
 		};
-		_pedMenu.AddItem(tasksItem);
-		_pedMenu.AddItem(uIMenuItem);
-		_pedMenu.AddItem(uIMenuItem2);
-		_pedMenu.AddItem(uIMenuItem3);
-		ModController.Instance.MainMenu.AddItem(globalTasks);
-		base.Tick += OnTick;
-		base.Aborted += OnAborted;
+		_pedMenu.Add(tasksItem);
+		_pedMenu.Add(uIMenuItem);
+		_pedMenu.Add(uIMenuItem2);
+		_pedMenu.Add(uIMenuItem3);
+		ModController.Instance.MainMenu.Add(globalTasks);
+		Tick += OnTick;
+		Aborted += OnAborted;
 	}
 
 	private void SetTask(Ped ped, PedTask task)
@@ -108,7 +108,7 @@ public class PlayerGroupManager : Script
 		switch (task)
 		{
 		case PedTask.Chill:
-			Function.Call(Hash._0x277F471BA9DB000B, new InputArgument[6]
+			Function.Call((Hash)0x277F471BA9DB000BuL, new InputArgument[6]
 			{
 				ped.Handle,
 				ped.Position.X,
@@ -129,7 +129,7 @@ public class PlayerGroupManager : Script
 			break;
 		case PedTask.Leave:
 			ped.LeaveGroup();
-			ped.CurrentBlip?.Remove();
+			ped.AttachedBlip?.Delete();
 			ped.MarkAsNoLongerNeeded();
 			EntityEventWrapper.Dispose(ped);
 			break;
@@ -138,10 +138,10 @@ public class PlayerGroupManager : Script
 			Vehicle closestVehicle = World.GetClosestVehicle(ped.Position, 100f);
 			if (closestVehicle == null)
 			{
-				UI.Notify("There's no vehicle near this ped.", blinking: true);
+				Notifier.Show("There's no vehicle near this ped.", blinking: true);
 				return;
 			}
-			Function.Call(Hash._0xFC545A9F0626E3B6, new InputArgument[6] { ped.Handle, closestVehicle.Handle, PlayerPed.Handle, 1074528293, 262144, 15 });
+			Function.Call((Hash)0xFC545A9F0626E3B6uL, new InputArgument[6] { ped.Handle, closestVehicle.Handle, PlayerPed.Handle, 1074528293, 262144, 15 });
 			break;
 		}
 		}
@@ -150,7 +150,7 @@ public class PlayerGroupManager : Script
 
 	private void OnAborted(object sender, EventArgs eventArgs)
 	{
-		PedGroup currentPedGroup = PlayerPed.CurrentPedGroup;
+		PedGroup currentPedGroup = PlayerPed.PedGroup;
 		List<Ped> list = currentPedGroup.Where((Ped ped2) => !ped2.IsPlayer).ToList();
 		currentPedGroup.Dispose();
 		while (list.Count > 0)
@@ -163,17 +163,17 @@ public class PlayerGroupManager : Script
 
 	private void OnTick(object sender, EventArgs eventArgs)
 	{
-		if (PlayerPed.IsInVehicle() || MenuConrtoller.MenuPool.IsAnyMenuOpen() || PlayerPed.CurrentPedGroup.MemberCount <= 0)
+		if (PlayerPed.IsInVehicle() || MenuConrtoller.MenuPool.AreAnyVisible || PlayerPed.PedGroup.MemberCount <= 0)
 		{
 			return;
 		}
 		Ped[] nearbyPeds = World.GetNearbyPeds(PlayerPed, 1.5f);
 		Ped closest = World.GetClosest(PlayerPosition, nearbyPeds);
-		if (!(closest == null) && !closest.IsInVehicle() && !(closest.CurrentPedGroup != PlayerPed.CurrentPedGroup))
+		if (!(closest == null) && !closest.IsInVehicle() && !(closest.PedGroup != PlayerPed.PedGroup))
 		{
-			Game.DisableControlThisFrame(2, Control.Context);
+			Game.DisableControlThisFrame(Control.Context);
 			UiExtended.DisplayHelpTextThisFrame("Press ~INPUT_CONTEXT~ to configure this ped.");
-			if (Game.IsDisabledControlJustPressed(2, Control.Context))
+			if (Ctrl.DisabledJustPressed(Control.Context))
 			{
 				_selectedPed = closest;
 				_pedMenu.Visible = !_pedMenu.Visible;
@@ -220,10 +220,10 @@ public class PlayerGroupManager : Script
 		{
 			Deserialize();
 		}
-		List<Ped> list = PlayerPed.CurrentPedGroup.ToList(includingLeader: false);
+		List<Ped> list = PlayerPed.PedGroup.ToList(includingLeader: false);
 		if (list.Count <= 0)
 		{
-			UI.Notify("You have no bodyguards.");
+			Notifier.Show("You have no bodyguards.");
 			return;
 		}
 		List<PedData> pedDatas = _peds.ToList();
@@ -240,18 +240,18 @@ public class PlayerGroupManager : Script
 			}
 		});
 		Serializer.Serialize("./scripts/Guards.dat", _peds);
-		UI.Notify("~b~Guards~s~ saved!");
+		Notifier.Show("~b~Guards~s~ saved!");
 	}
 
 	private PedData UpdatePedData(Ped ped, PedData data)
 	{
 		PedTask task = (_pedTasks.ContainsKey(ped) ? _pedTasks[ped] : ((PedTask)(-1)));
 		IEnumerable<WeaponHash> source = ((WeaponHash[])Enum.GetValues(typeof(WeaponHash))).Where((WeaponHash hash) => ped.Weapons.HasWeapon(hash));
-		WeaponComponent[] componentHashes = (WeaponComponent[])Enum.GetValues(typeof(WeaponComponent));
+		WeaponComponentHash[] componentHashes = (WeaponComponentHash[])Enum.GetValues(typeof(WeaponComponentHash));
 		List<Weapon> weapons = source.ToList().ConvertAll(delegate(WeaponHash hash)
 		{
 			GTA.Weapon weapon = ped.Weapons[hash];
-			WeaponComponent[] components = componentHashes.Where((WeaponComponent h) => weapon.IsComponentActive(h)).ToArray();
+			WeaponComponentHash[] components = componentHashes.Where((WeaponComponentHash h) => weapon.Components[h].Active).ToArray();
 			return new Weapon(weapon.Ammo, weapon.Hash, components);
 		}).ToList();
 		switch (data == null)

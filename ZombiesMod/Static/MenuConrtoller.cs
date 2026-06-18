@@ -1,30 +1,35 @@
 using System;
 using GTA;
-using NativeUI;
+using LemonUI;
+using LemonUI.TimerBars;
 
 namespace ZombiesMod.Static;
 
+// Hosts the single LemonUI ObjectPool (menus) and TimerBarCollection (HUD bars) and
+// pumps them every frame. (Class name keeps the original "Conrtoller" spelling so
+// existing references and any serialized data stay valid.)
 public class MenuConrtoller : Script
 {
-	private static MenuPool _menuPool;
+	private static ObjectPool _menuPool;
 
-	private static TimerBarPool _barPool;
+	private static TimerBarCollection _barPool;
 
-	public static MenuPool MenuPool => _menuPool ?? (_menuPool = new MenuPool());
+	public static ObjectPool MenuPool => _menuPool ??= new ObjectPool();
 
-	public static TimerBarPool BarPool => _barPool ?? (_barPool = new TimerBarPool());
+	public static TimerBarCollection BarPool => _barPool ??= new TimerBarCollection();
 
 	public MenuConrtoller()
 	{
-		base.Tick += OnTick;
+		Tick += OnTick;
 	}
 
 	public void OnTick(object sender, EventArgs eventArgs)
 	{
-		if (_barPool != null && (_menuPool == null || (_menuPool != null && !_menuPool.IsAnyMenuOpen())))
+		// Draw HUD timer bars only when no menu is open (the menu takes visual priority).
+		if (_barPool != null && (_menuPool == null || !_menuPool.AreAnyVisible))
 		{
-			_barPool.Draw();
+			_barPool.Process();
 		}
-		_menuPool?.ProcessMenus();
+		_menuPool?.Process();
 	}
 }

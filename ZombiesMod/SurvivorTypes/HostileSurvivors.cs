@@ -67,7 +67,7 @@ public class HostileSurvivors : Survivors
 				}
 			}
 		}
-		UI.Notify("~r~Hostiles~s~ nearby!");
+		Notifier.Show("~r~Hostiles~s~ nearby!");
 	}
 
 	private void PedWrapperOnDisposed(EntityEventWrapper sender, Entity entity)
@@ -82,13 +82,13 @@ public class HostileSurvivors : Survivors
 	{
 		if (!(entity == null))
 		{
-			entity.CurrentBlip.Alpha = (_vehicle.Driver.Exists() ? 255 : 0);
+			entity.AttachedBlip.Alpha = (_vehicle.Driver.Exists() ? 255 : 0);
 		}
 	}
 
 	private void VehicleWrapperOnDied(EntityEventWrapper sender, Entity entity)
 	{
-		entity.CurrentBlip?.Remove();
+		entity.AttachedBlip?.Delete();
 		sender.Dispose();
 		_vehicle.MarkAsNoLongerNeeded();
 		_vehicle = null;
@@ -107,22 +107,22 @@ public class HostileSurvivors : Survivors
 			{
 				ped.Delete();
 			}
-			if (ped.CurrentBlip.Exists())
+			if (ped.AttachedBlip.Exists())
 			{
-				ped.CurrentBlip.Alpha = ((!ped.IsInVehicle()) ? 255 : 0);
+				ped.AttachedBlip.Alpha = ((!ped.IsInVehicle()) ? 255 : 0);
 			}
 		}
 	}
 
 	private void PedWrapperOnDied(EntityEventWrapper sender, Entity entity)
 	{
-		entity.CurrentBlip?.Remove();
+		entity.AttachedBlip?.Delete();
 		_peds.Remove(entity as Ped);
 	}
 
 	public override void CleanUp()
 	{
-		_vehicle?.CurrentBlip?.Remove();
+		_vehicle?.AttachedBlip?.Delete();
 		EntityEventWrapper.Dispose(_vehicle);
 	}
 

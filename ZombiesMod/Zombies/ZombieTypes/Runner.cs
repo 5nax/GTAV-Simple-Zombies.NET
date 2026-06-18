@@ -50,6 +50,6 @@ public class Runner : ZombiePed
 
 	public override void OnGoToTarget(Ped target)
 	{
-		Function.Call(Hash._0x6A071245EB0D1882, new InputArgument[7] { _ped.Handle, target.Handle, -1, 0f, 5f, 1073741824, 0 });
+		Function.Call((Hash)0x6A071245EB0D1882uL, new InputArgument[7] { _ped.Handle, target.Handle, -1, 0f, 5f, 1073741824, 0 });
 	}
 }

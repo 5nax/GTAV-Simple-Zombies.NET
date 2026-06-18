@@ -32,7 +32,7 @@ public class Config
 			{
 				File.Delete("./scripts/Inventory.dat");
 			}
-			UI.Notify($"Updating Simple Zombies to version ~g~{VersionId}~s~. Overwritting the " + "inventory file since there are new items.");
+			Notifier.Show($"Updating Simple Zombies to version ~g~{VersionId}~s~. Overwritting the " + "inventory file since there are new items.");
 			scriptSettings.SetValue("mod", "version_id", VersionId);
 			scriptSettings.Save();
 		}

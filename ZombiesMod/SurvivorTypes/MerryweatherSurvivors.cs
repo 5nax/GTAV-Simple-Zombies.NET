@@ -5,7 +5,7 @@ using System.Linq;
 using GTA;
 using GTA.Math;
 using GTA.Native;
-using NativeUI;
+using LemonUI.TimerBars;
 using ZombiesMod.DataClasses;
 using ZombiesMod.Extensions;
 using ZombiesMod.PlayerManagement;
@@ -45,7 +45,7 @@ public class MerryweatherSurvivors : Survivors
 
 	private Vector3 _dropZone;
 
-	private readonly BarTimerBar _timerBar;
+	private readonly TimerBarProgress _timerBar;
 
 	private float _currentTime;
 
@@ -67,7 +67,7 @@ public class MerryweatherSurvivors : Survivors
 
 	public MerryweatherSurvivors(int timeout)
 	{
-		_timerBar = new BarTimerBar("TIME LEFT");
+		_timerBar = new TimerBarProgress("TIME LEFT");
 		_timeOut = timeout;
 		_currentTime = _timeOut;
 	}
@@ -90,7 +90,7 @@ public class MerryweatherSurvivors : Survivors
 			blip.Sprite = BlipSprite.CrateDrop;
 			blip.Color = BlipColor.Yellow;
 			blip.Name = "Crate Drop";
-			_blip.Remove();
+			_blip.Delete();
 			_peds.ForEach(delegate(Ped ped)
 			{
 				Blip blip2 = ped.AddBlip();
@@ -102,7 +102,7 @@ public class MerryweatherSurvivors : Survivors
 
 	private bool CantSeeCrate()
 	{
-		return !_prop.IsOnScreen || _prop.IsOccluded || _prop.CurrentBlip.Exists() || _prop.Position.VDist(base.PlayerPosition) > 50f;
+		return !_prop.IsOnScreen || _prop.IsOccluded || _prop.AttachedBlip.Exists() || _prop.Position.VDist(base.PlayerPosition) > 50f;
 	}
 
 	private void UpdateTimer()
@@ -111,25 +111,25 @@ public class MerryweatherSurvivors : Survivors
 		{
 			if (!_notify)
 			{
-				BigMessageThread.MessageInstance.ShowMissionPassedMessage("~r~Entering Hostile Zone");
+				GTA.UI.Screen.ShowSubtitle("~r~Entering Hostile Zone", 3000);
 				_notify = true;
 			}
-			if (MenuConrtoller.BarPool.ToList().Contains(_timerBar))
+			if (MenuConrtoller.BarPool.Contains(_timerBar))
 			{
 				MenuConrtoller.BarPool.Remove(_timerBar);
 			}
 			return;
 		}
-		if (!MenuConrtoller.BarPool.ToList().Contains(_timerBar))
+		if (!MenuConrtoller.BarPool.Contains(_timerBar))
 		{
 			MenuConrtoller.BarPool.Add(_timerBar);
 		}
-		_timerBar.Percentage = _currentTime / (float)_timeOut;
+		_timerBar.Progress = ((_timeOut > 0) ? _currentTime / _timeOut : 0f) * 100f;
 		_currentTime -= Game.LastFrameTime;
 		if (!(_currentTime > 0f))
 		{
 			Complete();
-			UI.Notify("~r~Failed~s~ to retrieve crate.");
+			Notifier.Show("~r~Failed~s~ to retrieve crate.");
 		}
 	}
 
@@ -183,14 +183,14 @@ public class MerryweatherSurvivors : Survivors
 			}
 		}
 		World.CreateVehicle("mesa3", World.GetNextPositionOnStreet(_prop.Position.Around(25f)));
-		UI.Notify(string.Format("~y~Merryweather~s~ {0} drop nearby.", (_dropType == DropType.Loot) ? "loot" : "weapons"));
+		Notifier.Show(string.Format("~y~Merryweather~s~ {0} drop nearby.", (_dropType == DropType.Loot) ? "loot" : "weapons"));
 	}
 
 	private void PedWrapperOnDied(EntityEventWrapper sender, Entity entity)
 	{
 		_peds.Remove(entity as Ped);
 		entity.MarkAsNoLongerNeeded();
-		entity.CurrentBlip?.Remove();
+		entity.AttachedBlip?.Delete();
 		sender.Dispose();
 	}
 
@@ -201,8 +201,8 @@ public class MerryweatherSurvivors : Survivors
 			return;
 		}
 		UiExtended.DisplayHelpTextThisFrame("Press ~INPUT_CONTEXT~ to loot.");
-		Game.DisableControlThisFrame(2, Control.Context);
-		if (!Game.IsDisabledControlJustPressed(2, Control.Context))
+		Game.DisableControlThisFrame(Control.Context);
+		if (!Ctrl.DisabledJustPressed(Control.Context))
 		{
 			return;
 		}
@@ -229,7 +229,7 @@ public class MerryweatherSurvivors : Survivors
 					num2++;
 				}
 			}
-			UI.Notify($"Found ~g~{num2}~s~ weapons.");
+			Notifier.Show($"Found ~g~{num2}~s~ weapons.");
 			break;
 		}
 		}
@@ -241,12 +241,12 @@ public class MerryweatherSurvivors : Survivors
 		_particle.Delete();
 		_peds?.ForEach(delegate(Ped ped)
 		{
-			ped.CurrentBlip?.Remove();
+			ped.AttachedBlip?.Delete();
 			ped.AlwaysKeepTask = true;
 			ped.IsPersistent = false;
 		});
 		_blip?.Remove();
-		if (MenuConrtoller.BarPool.ToList().Contains(_timerBar))
+		if (MenuConrtoller.BarPool.Contains(_timerBar))
 		{
 			MenuConrtoller.BarPool.Remove(_timerBar);
 		}
@@ -258,11 +258,11 @@ public class MerryweatherSurvivors : Survivors
 		_prop?.Delete();
 		_peds?.ForEach(delegate(Ped ped)
 		{
-			ped.CurrentBlip?.Remove();
+			ped.AttachedBlip?.Delete();
 			ped.Delete();
 		});
 		_blip?.Remove();
-		if (MenuConrtoller.BarPool.ToList().Contains(_timerBar))
+		if (MenuConrtoller.BarPool.Contains(_timerBar))
 		{
 			MenuConrtoller.BarPool.Remove(_timerBar);
 		}

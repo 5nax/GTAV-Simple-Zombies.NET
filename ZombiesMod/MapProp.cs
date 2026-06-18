@@ -51,13 +51,13 @@ public class MapProp : IMapObject, IIdentifier, IProp, ISpatial, IHandleable, ID
 
 	public bool Exists()
 	{
-		return Function.Call<bool>(Hash._0x7239B21A38F536BA, new InputArgument[1] { Handle });
+		return Function.Call<bool>((Hash)0x7239B21A38F536BAuL, new InputArgument[1] { Handle });
 	}
 
 	public unsafe void Delete()
 	{
 		int handle = Handle;
-		Function.Call(Hash._0xAE3CBE5BF394C9C9, new InputArgument[1] { &handle });
+		Function.Call((Hash)0xAE3CBE5BF394C9C9uL, new InputArgument[1] { &handle });
 		Handle = handle;
 	}
 }

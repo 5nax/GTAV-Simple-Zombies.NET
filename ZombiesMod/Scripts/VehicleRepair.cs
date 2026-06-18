@@ -45,26 +45,26 @@ public class VehicleRepair : Script
 		}
 		if (_selectedVehicle != null)
 		{
-			Game.DisableControlThisFrame(2, Control.Attack);
+			Game.DisableControlThisFrame(Control.Attack);
 			UiExtended.DisplayHelpTextThisFrame("Press ~INPUT_ATTACK~ to cancel.");
-			if (Game.IsDisabledControlJustPressed(2, Control.Attack))
+			if (Ctrl.DisabledJustPressed(Control.Attack))
 			{
 				PlayerPed.Task.ClearAllImmediately();
-				_selectedVehicle.CloseDoor(VehicleDoor.Hood, instantly: false);
+				_selectedVehicle.CloseDoor(VehicleDoorIndex.Hood, instantly: false);
 				_selectedVehicle = null;
 			}
 			else if (PlayerPed.TaskSequenceProgress == -1)
 			{
 				_selectedVehicle.EngineHealth = 1000f;
-				_selectedVehicle.CloseDoor(VehicleDoor.Hood, instantly: false);
+				_selectedVehicle.CloseDoor(VehicleDoorIndex.Hood, instantly: false);
 				_selectedVehicle = null;
 				PlayerInventory.Instance.AddItem(_item, -1, ItemType.Item);
-				UI.Notify("Items: -~r~1");
+				Notifier.Show("Items: -~r~1");
 			}
 		}
 		else
 		{
-			if (!(closestVehicle != null) || !closestVehicle.Model.IsCar || !(closestVehicle.EngineHealth < 1000f) || MenuConrtoller.MenuPool.IsAnyMenuOpen() || closestVehicle.IsUpsideDown || !closestVehicle.HasBone("engine"))
+			if (!(closestVehicle != null) || !closestVehicle.Model.IsCar || !(closestVehicle.EngineHealth < 1000f) || MenuConrtoller.MenuPool.AreAnyVisible || closestVehicle.IsUpsideDown || !closestVehicle.HasBone("engine"))
 			{
 				return;
 			}
@@ -78,11 +78,11 @@ public class VehicleRepair : Script
 				UiExtended.DisplayHelpTextThisFrame("You need a vehicle repair kit to fix this engine.");
 				return;
 			}
-			Game.DisableControlThisFrame(2, Control.Context);
+			Game.DisableControlThisFrame(Control.Context);
 			UiExtended.DisplayHelpTextThisFrame("Press ~INPUT_CONTEXT~ to repair engine.");
-			if (Game.IsDisabledControlJustPressed(2, Control.Context))
+			if (Ctrl.DisabledJustPressed(Control.Context))
 			{
-				closestVehicle.OpenDoor(VehicleDoor.Hood, loose: false, instantly: false);
+				closestVehicle.OpenDoor(VehicleDoorIndex.Hood, loose: false, instantly: false);
 				PlayerPed.Weapons.Select(WeaponHash.Unarmed, equipNow: true);
 				Vector3 position = boneCoord + closestVehicle.ForwardVector;
 				float heading = (closestVehicle.Position - Database.PlayerPosition).ToHeading();

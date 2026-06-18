@@ -7,7 +7,7 @@ public static class PropExt
 {
 	public static void SetStateOfDoor(this Prop prop, bool locked, DoorState heading)
 	{
-		Function.Call(Hash._0xF82D8F1926A02C3D, new InputArgument[7]
+		Function.Call((Hash)0xF82D8F1926A02C3DuL, new InputArgument[7]
 		{
 			prop.Model.Hash,
 			prop.Position.X,
@@ -23,7 +23,7 @@ public static class PropExt
 	{
 		bool result = false;
 		int num = 0;
-		Function.Call(Hash._0xEDC1A5B84AEF33FF, new InputArgument[6]
+		Function.Call((Hash)0xEDC1A5B84AEF33FFuL, new InputArgument[6]
 		{
 			prop.Model.Hash,
 			prop.Position.X,

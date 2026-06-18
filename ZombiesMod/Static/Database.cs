@@ -84,7 +84,7 @@ public static class Database
 
 	public static Vehicle PlayerCurrentVehicle => PlayerPed.CurrentVehicle;
 
-	public static PedGroup PlayerGroup => PlayerPed.CurrentPedGroup;
+	public static PedGroup PlayerGroup => PlayerPed.PedGroup;
 
 	public static bool PlayerIsDead => PlayerPed.IsDead;
 

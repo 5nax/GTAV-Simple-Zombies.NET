@@ -22,28 +22,28 @@ public class RecruitPeds : Script
 
 	private static void OnTick(object sender, EventArgs eventArgs)
 	{
-		if (MenuConrtoller.MenuPool.IsAnyMenuOpen() || PlayerPed.CurrentPedGroup.MemberCount >= 6)
+		if (MenuConrtoller.MenuPool.AreAnyVisible || PlayerPed.PedGroup.MemberCount >= 6)
 		{
 			return;
 		}
 		Ped[] nearbyPeds = World.GetNearbyPeds(PlayerPed, 1.5f);
 		Ped closest = World.GetClosest(PlayerPosition, nearbyPeds);
-		if (closest == null || closest.IsDead || closest.IsInCombatAgainst(PlayerPed) || closest.GetRelationshipWithPed(PlayerPed) == Relationship.Hate || closest.RelationshipGroup != Relationships.FriendlyRelationship || closest.CurrentPedGroup == PlayerPed.CurrentPedGroup)
+		if (closest == null || closest.IsDead || closest.IsInCombatAgainst(PlayerPed) || closest.GetRelationshipWithPed(PlayerPed) == Relationship.Hate || closest.RelationshipGroup != Relationships.FriendlyRelationship || closest.PedGroup == PlayerPed.PedGroup)
 		{
 			return;
 		}
-		Game.DisableControlThisFrame(2, Control.Enter);
+		Game.DisableControlThisFrame(Control.Enter);
 		UiExtended.DisplayHelpTextThisFrame("Press ~INPUT_ENTER~ to recruit this ped.");
-		if (Game.IsDisabledControlJustPressed(2, Control.Enter))
+		if (Ctrl.DisabledJustPressed(Control.Enter))
 		{
 			if (FriendlySurvivors.Instance != null)
 			{
 				FriendlySurvivors.Instance.RemovePed(closest);
 			}
 			closest.Recruit(PlayerPed);
-			if (PlayerPed.CurrentPedGroup.MemberCount >= 6)
+			if (PlayerPed.PedGroup.MemberCount >= 6)
 			{
-				UI.Notify("You've reached the max amount of ~b~guards~s~.");
+				Notifier.Show("You've reached the max amount of ~b~guards~s~.");
 			}
 		}
 	}

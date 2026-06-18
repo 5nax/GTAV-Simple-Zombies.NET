@@ -31,10 +31,10 @@ public class WorldController : Script
 
 	private static void Reset()
 	{
-		Function.Call(Hash._0x5EE2CAFF7F17770D, new InputArgument[1] { true });
-		Function.Call(Hash._0x84436EC293B1415F, new InputArgument[1] { true });
-		Function.Call(Hash._0x80D9F74197EA47D9, new InputArgument[1] { true });
-		Function.Call(Hash._0x2AFD795EEAC8D30D, new InputArgument[1] { true });
+		Function.Call((Hash)0x5EE2CAFF7F17770DuL, new InputArgument[1] { true });
+		Function.Call((Hash)0x84436EC293B1415FuL, new InputArgument[1] { true });
+		Function.Call((Hash)0x80D9F74197EA47D9uL, new InputArgument[1] { true });
+		Function.Call((Hash)0x2AFD795EEAC8D30DuL, new InputArgument[1] { true });
 	}
 
 	private void OnTick(object sender, EventArgs e)
@@ -68,7 +68,7 @@ public class WorldController : Script
 			});
 			Array.ForEach(array3, delegate(Vehicle t)
 			{
-				Function.Call(Hash._0xAA0BC91BE0B796E3, new InputArgument[2] { t.Handle, 0f });
+				Function.Call((Hash)0xAA0BC91BE0B796E3uL, new InputArgument[2] { t.Handle, 0f });
 			});
 			ScriptExtended.TerminateScriptByName("re_prison");
 			ScriptExtended.TerminateScriptByName("am_prison");
@@ -106,20 +106,20 @@ public class WorldController : Script
 			ScriptExtended.TerminateScriptByName("re_atmrobbery");
 			ScriptExtended.TerminateScriptByName("ob_vend1");
 			ScriptExtended.TerminateScriptByName("ob_vend2");
-			Function.Call(Hash._0xA1CADDCD98415A41, new InputArgument[2] { "PRISON_ALARMS", 0 });
-			Function.Call(Hash._0x218DD44AAAC964FF, new InputArgument[3] { "AZ_COUNTRYSIDE_PRISON_01_ANNOUNCER_GENERAL", 0, 0 });
-			Function.Call(Hash._0x218DD44AAAC964FF, new InputArgument[3] { "AZ_COUNTRYSIDE_PRISON_01_ANNOUNCER_WARNING", 0, 0 });
-			int num = Function.Call<int>(Hash._0xD24D37CC275948CC, new InputArgument[1] { "prop_gate_prison_01" });
-			Function.Call(Hash._0xF82D8F1926A02C3D, new InputArgument[7] { num, 1845f, 2605f, 45f, false, 0, 0 });
-			int num2 = Function.Call<int>(Hash._0xD24D37CC275948CC, new InputArgument[1] { "prop_gate_prison_01" });
-			Function.Call(Hash._0x9B12F9A24FABEDB0, new InputArgument[7] { num2, 1819.27f, 2608.53f, 44.61f, false, 0, 0 });
+			Function.Call((Hash)0xA1CADDCD98415A41uL, new InputArgument[2] { "PRISON_ALARMS", 0 });
+			Function.Call((Hash)0x218DD44AAAC964FFuL, new InputArgument[3] { "AZ_COUNTRYSIDE_PRISON_01_ANNOUNCER_GENERAL", 0, 0 });
+			Function.Call((Hash)0x218DD44AAAC964FFuL, new InputArgument[3] { "AZ_COUNTRYSIDE_PRISON_01_ANNOUNCER_WARNING", 0, 0 });
+			int num = Function.Call<int>((Hash)0xD24D37CC275948CCuL, new InputArgument[1] { "prop_gate_prison_01" });
+			Function.Call((Hash)0xF82D8F1926A02C3DuL, new InputArgument[7] { num, 1845f, 2605f, 45f, false, 0, 0 });
+			int num2 = Function.Call<int>((Hash)0xD24D37CC275948CCuL, new InputArgument[1] { "prop_gate_prison_01" });
+			Function.Call((Hash)0x9B12F9A24FABEDB0uL, new InputArgument[7] { num2, 1819.27f, 2608.53f, 44.61f, false, 0, 0 });
 			if (_reset)
 			{
-				Function.Call(Hash._0x5EE2CAFF7F17770D, new InputArgument[1] { false });
-				Function.Call(Hash._0x84436EC293B1415F, new InputArgument[1] { false });
-				Function.Call(Hash._0x80D9F74197EA47D9, new InputArgument[1] { false });
-				Function.Call(Hash._0x2AFD795EEAC8D30D, new InputArgument[1] { false });
-				Function.Call(Hash._0xF796359A959DF65D, new InputArgument[1] { false });
+				Function.Call((Hash)0x5EE2CAFF7F17770DuL, new InputArgument[1] { false });
+				Function.Call((Hash)0x84436EC293B1415FuL, new InputArgument[1] { false });
+				Function.Call((Hash)0x80D9F74197EA47D9uL, new InputArgument[1] { false });
+				Function.Call((Hash)0x2AFD795EEAC8D30DuL, new InputArgument[1] { false });
+				Function.Call((Hash)0xF796359A959DF65DuL, new InputArgument[1] { false });
 				_reset = false;
 			}
 		}

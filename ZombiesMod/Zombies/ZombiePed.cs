@@ -121,7 +121,7 @@ public abstract class ZombiePed : Entity, IEquatable<Ped>
 
 	private void OnDied(EntityEventWrapper sender, Entity entity)
 	{
-		base.CurrentBlip?.Remove();
+		base.AttachedBlip?.Delete();
 		if (ZombieVehicleSpawner.Instance.IsInvalidZone(entity.Position) && ZombieVehicleSpawner.Instance.IsValidSpawn(entity.Position))
 		{
 			ZombieVehicleSpawner.Instance.SpawnBlocker.Add(entity.Position);

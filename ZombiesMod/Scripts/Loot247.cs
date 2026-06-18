@@ -67,9 +67,9 @@ public class Loot247 : Script, ISpawner
 		float num = closest.Position.VDist(PlayerPosition);
 		if (!(num > 1.5f))
 		{
-			Game.DisableControlThisFrame(2, Control.Context);
+			Game.DisableControlThisFrame(Control.Context);
 			UiExtended.DisplayHelpTextThisFrame("Press ~INPUT_CONTEXT~ to loot the shelf.");
-			if (Game.IsDisabledControlJustPressed(2, Control.Context))
+			if (Ctrl.DisabledJustPressed(Control.Context))
 			{
 				_lootedShelfes.Add(closest);
 				bool flag = Database.Random.NextDouble() > 0.30000001192092896;
@@ -114,7 +114,7 @@ public class Loot247 : Script, ISpawner
 		while (_blips.Count > 0)
 		{
 			Blip blip = _blips[0];
-			blip.Remove();
+			blip.Delete();
 			_blips.RemoveAt(0);
 		}
 	}

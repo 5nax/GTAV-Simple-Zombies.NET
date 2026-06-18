@@ -83,7 +83,7 @@ public class ZombieVehicleSpawner : Script, ISpawner
 	{
 		if (Spawn)
 		{
-			if (!MenuConrtoller.MenuPool.IsAnyMenuOpen())
+			if (!MenuConrtoller.MenuPool.AreAnyVisible)
 			{
 				if (ZombieCreator.IsNightFall() && !_nightFall)
 				{
@@ -184,7 +184,7 @@ public class ZombieVehicleSpawner : Script, ISpawner
 	private static void SmashRandomWindow(Vehicle veh)
 	{
 		VehicleWindow[] source = (VehicleWindow[])Enum.GetValues(typeof(VehicleWindow));
-		source = source.Where((VehicleWindow v) => Function.Call<bool>(Hash._0x46E571A0E20D01F1, new InputArgument[2]
+		source = source.Where((VehicleWindow v) => Function.Call<bool>((Hash)0x46E571A0E20D01F1uL, new InputArgument[2]
 		{
 			veh.Handle,
 			(int)v

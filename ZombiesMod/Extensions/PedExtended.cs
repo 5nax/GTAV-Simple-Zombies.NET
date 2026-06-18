@@ -17,22 +17,22 @@ public static class PedExtended
 
 	public static void PlayPain(this Ped ped, int type)
 	{
-		Function.Call(Hash._0xBC9AE166038A5CEC, new InputArgument[4] { ped.Handle, type, 0, 0 });
+		Function.Call((Hash)0xBC9AE166038A5CECuL, new InputArgument[4] { ped.Handle, type, 0, 0 });
 	}
 
 	public static void PlayFacialAnim(this Ped ped, string animSet, string animName)
 	{
-		Function.Call(Hash._0xE1E65CA8AC9C00ED, new InputArgument[3] { ped.Handle, animName, animSet });
+		Function.Call((Hash)0xE1E65CA8AC9C00EDuL, new InputArgument[3] { ped.Handle, animName, animSet });
 	}
 
 	public static bool HasBeenDamagedByMelee(this Ped ped)
 	{
-		return Function.Call<bool>(Hash._0x131D401334815E94, new InputArgument[3] { ped.Handle, 0, 1 });
+		return Function.Call<bool>((Hash)0x131D401334815E94uL, new InputArgument[3] { ped.Handle, 0, 1 });
 	}
 
 	public static bool HasBeenDamagedBy(this Ped ped, WeaponHash weapon)
 	{
-		return Function.Call<bool>(Hash._0x131D401334815E94, new InputArgument[3]
+		return Function.Call<bool>((Hash)0x131D401334815E94uL, new InputArgument[3]
 		{
 			ped.Handle,
 			(int)weapon,
@@ -43,7 +43,7 @@ public static class PedExtended
 	public unsafe static Bone LastDamagedBone(this Ped ped)
 	{
 		int result = default(int);
-		if (Function.Call<bool>(Hash._0xD75960F6BD9EA49C, new InputArgument[2]
+		if (Function.Call<bool>((Hash)0xD75960F6BD9EA49CuL, new InputArgument[2]
 		{
 			ped.Handle,
 			&result
@@ -51,12 +51,12 @@ public static class PedExtended
 		{
 			return (Bone)result;
 		}
-		return Bone.SKEL_ROOT;
+		return Bone.SkelRoot;
 	}
 
 	public static void SetPathAvoidWater(this Ped ped, bool toggle)
 	{
-		Function.Call(Hash._0x38FE1EC73743793C, new InputArgument[2]
+		Function.Call((Hash)0x38FE1EC73743793CuL, new InputArgument[2]
 		{
 			ped.Handle,
 			toggle ? 1 : 0
@@ -65,7 +65,7 @@ public static class PedExtended
 
 	public static void SetStealthMovement(this Ped ped, bool toggle)
 	{
-		Function.Call(Hash._0x88CBB5CEB96B7BD2, new InputArgument[2]
+		Function.Call((Hash)0x88CBB5CEB96B7BD2uL, new InputArgument[2]
 		{
 			toggle ? 1 : 0,
 			"DEFAULT_ACTION"
@@ -74,12 +74,12 @@ public static class PedExtended
 
 	public static bool GetStealthMovement(this Ped ped)
 	{
-		return Function.Call<bool>(Hash._0x7C2AC9CA66575FBF, new InputArgument[1] { ped.Handle });
+		return Function.Call<bool>((Hash)0x7C2AC9CA66575FBFuL, new InputArgument[1] { ped.Handle });
 	}
 
 	public static void SetComponentVariation(this Ped ped, ComponentId id, int drawableId, int textureId, int paletteId)
 	{
-		Function.Call(Hash._0x262B14F48D29DE80, new InputArgument[5]
+		Function.Call((Hash)0x262B14F48D29DE80uL, new InputArgument[5]
 		{
 			ped.Handle,
 			(int)id,
@@ -91,7 +91,7 @@ public static class PedExtended
 
 	public static int GetDrawableVariation(this Ped ped, ComponentId id)
 	{
-		return Function.Call<int>(Hash._0x67F3780DD425D4FC, new InputArgument[2]
+		return Function.Call<int>((Hash)0x67F3780DD425D4FCuL, new InputArgument[2]
 		{
 			ped.Handle,
 			(int)id
@@ -100,7 +100,7 @@ public static class PedExtended
 
 	public static int GetNumberOfDrawableVariations(this Ped ped, ComponentId id)
 	{
-		return Function.Call<int>(Hash._0x27561561732A7842, new InputArgument[2]
+		return Function.Call<int>((Hash)0x27561561732A7842uL, new InputArgument[2]
 		{
 			ped.Handle,
 			(int)id
@@ -109,7 +109,7 @@ public static class PedExtended
 
 	public static bool IsSubttaskActive(this Ped ped, Subtask task)
 	{
-		return Function.Call<bool>(Hash._0xB0760331C7AA4155, new InputArgument[2]
+		return Function.Call<bool>((Hash)0xB0760331C7AA4155uL, new InputArgument[2]
 		{
 			ped,
 			(int)task
@@ -123,7 +123,7 @@ public static class PedExtended
 
 	public static void SetPathCanUseLadders(this Ped ped, bool toggle)
 	{
-		Function.Call(Hash._0x77A5B103C87F476E, new InputArgument[2]
+		Function.Call((Hash)0x77A5B103C87F476EuL, new InputArgument[2]
 		{
 			ped.Handle,
 			toggle ? 1 : 0
@@ -132,7 +132,7 @@ public static class PedExtended
 
 	public static void SetPathCanClimb(this Ped ped, bool toggle)
 	{
-		Function.Call(Hash._0x8E06A6FE76C9EFF4, new InputArgument[2]
+		Function.Call((Hash)0x8E06A6FE76C9EFF4uL, new InputArgument[2]
 		{
 			ped.Handle,
 			toggle ? 1 : 0
@@ -143,28 +143,28 @@ public static class PedExtended
 	{
 		if (!(ped == null))
 		{
-			while (!Function.Call<bool>(Hash._0xC4EA073D86FB29B0, new InputArgument[1] { animation }))
+			while (!Function.Call<bool>((Hash)0xC4EA073D86FB29B0uL, new InputArgument[1] { animation }))
 			{
-				Function.Call(Hash._0x6EA47DAE7FAD0EED, new InputArgument[1] { animation });
+				Function.Call((Hash)0x6EA47DAE7FAD0EEDuL, new InputArgument[1] { animation });
 				Script.Yield();
 			}
-			Function.Call(Hash._0xAF8A94EDE7712BEF, new InputArgument[3] { ped.Handle, animation, 1048576000 });
+			Function.Call((Hash)0xAF8A94EDE7712BEFuL, new InputArgument[3] { ped.Handle, animation, 1048576000 });
 		}
 	}
 
 	public static void RemoveElegantly(this Ped ped)
 	{
-		Function.Call(Hash._0xAC6D445B994DF95E, new InputArgument[1] { ped.Handle });
+		Function.Call((Hash)0xAC6D445B994DF95EuL, new InputArgument[1] { ped.Handle });
 	}
 
 	public static void SetRagdollOnCollision(this Ped ped, bool toggle)
 	{
-		Function.Call(Hash._0xF0A4F1BBF4FA7497, new InputArgument[2] { ped.Handle, toggle });
+		Function.Call((Hash)0xF0A4F1BBF4FA7497uL, new InputArgument[2] { ped.Handle, toggle });
 	}
 
 	public static void SetAlertness(this Ped ped, Alertness alertness)
 	{
-		Function.Call(Hash._0xDBA71115ED9941A6, new InputArgument[2]
+		Function.Call((Hash)0xDBA71115ED9941A6uL, new InputArgument[2]
 		{
 			ped.Handle,
 			(int)alertness
@@ -173,7 +173,7 @@ public static class PedExtended
 
 	public static void SetCombatAblility(this Ped ped, CombatAbility ability)
 	{
-		Function.Call(Hash._0xC7622C0D36B2FDA8, new InputArgument[2]
+		Function.Call((Hash)0xC7622C0D36B2FDA8uL, new InputArgument[2]
 		{
 			ped.Handle,
 			(int)ability
@@ -182,7 +182,7 @@ public static class PedExtended
 
 	public static void SetCanEvasiveDive(this Ped ped, bool toggle)
 	{
-		Function.Call(Hash._0x6B7A646C242A7059, new InputArgument[2]
+		Function.Call((Hash)0x6B7A646C242A7059uL, new InputArgument[2]
 		{
 			ped.Handle,
 			toggle ? 1 : 0
@@ -193,18 +193,18 @@ public static class PedExtended
 	{
 		if (ped.IsAmbientSpeechPlaying())
 		{
-			Function.Call(Hash._0xB8BEC0CA6F0EDB0F, new InputArgument[1] { ped.Handle });
+			Function.Call((Hash)0xB8BEC0CA6F0EDB0FuL, new InputArgument[1] { ped.Handle });
 		}
 	}
 
 	public static bool IsAmbientSpeechPlaying(this Ped ped)
 	{
-		return Function.Call<bool>(Hash._0x9072C8B49907BFAD, new InputArgument[1] { ped.Handle });
+		return Function.Call<bool>((Hash)0x9072C8B49907BFADuL, new InputArgument[1] { ped.Handle });
 	}
 
 	public static void DisablePainAudio(this Ped ped, bool toggle)
 	{
-		Function.Call(Hash._0xA9A41C1E940FB0E8, new InputArgument[2]
+		Function.Call((Hash)0xA9A41C1E940FB0E8uL, new InputArgument[2]
 		{
 			ped.Handle,
 			toggle ? 1 : 0
@@ -213,7 +213,7 @@ public static class PedExtended
 
 	public static void StopSpeaking(this Ped ped, bool shaking)
 	{
-		Function.Call(Hash._0x9D64D7405520E3D3, new InputArgument[2]
+		Function.Call((Hash)0x9D64D7405520E3D3uL, new InputArgument[2]
 		{
 			ped.Handle,
 			shaking ? 1 : 0
@@ -222,7 +222,7 @@ public static class PedExtended
 
 	public static void SetCanPlayAmbientAnims(this Ped ped, bool toggle)
 	{
-		Function.Call(Hash._0x6373D1349925A70E, new InputArgument[2]
+		Function.Call((Hash)0x6373D1349925A70EuL, new InputArgument[2]
 		{
 			ped.Handle,
 			toggle ? 1 : 0
@@ -231,7 +231,7 @@ public static class PedExtended
 
 	public static void SetCombatAttributes(this Ped ped, CombatAttributes attribute, bool enabled)
 	{
-		Function.Call(Hash._0x9F7794730795E019, new InputArgument[3]
+		Function.Call((Hash)0x9F7794730795E019uL, new InputArgument[3]
 		{
 			ped.Handle,
 			(int)attribute,
@@ -241,7 +241,7 @@ public static class PedExtended
 
 	public static void SetPathAvoidFires(this Ped ped, bool toggle)
 	{
-		Function.Call(Hash._0x4455517B28441E60, new InputArgument[2]
+		Function.Call((Hash)0x4455517B28441E60uL, new InputArgument[2]
 		{
 			ped.Handle,
 			toggle ? 1 : 0
@@ -250,7 +250,7 @@ public static class PedExtended
 
 	public static void ApplyDamagePack(this Ped ped, float damage, float multiplier, DamagePack damagePack)
 	{
-		Function.Call(Hash._0x46DF918788CB093F, new InputArgument[4]
+		Function.Call((Hash)0x46DF918788CB093FuL, new InputArgument[4]
 		{
 			ped.Handle,
 			damagePack.ToString(),
@@ -264,10 +264,10 @@ public static class PedExtended
 		switch (type)
 		{
 		case FirendlyFireType.CanAttack:
-			Function.Call(Hash._0xB3B1CB349FF9C75D, new InputArgument[3] { ped.Handle, true, false });
+			Function.Call((Hash)0xB3B1CB349FF9C75DuL, new InputArgument[3] { ped.Handle, true, false });
 			break;
 		case FirendlyFireType.CantAttack:
-			Function.Call(Hash._0xB3B1CB349FF9C75D, new InputArgument[3] { ped.Handle, false, false });
+			Function.Call((Hash)0xB3B1CB349FF9C75DuL, new InputArgument[3] { ped.Handle, false, false });
 			break;
 		}
 	}
@@ -276,7 +276,7 @@ public static class PedExtended
 	{
 		if (modifier >= SpeechModifier.Standard && (int)modifier < SpeechModifierNames.Length)
 		{
-			Function.Call(Hash._0x8E04FEDD28D42462, new InputArgument[3]
+			Function.Call((Hash)0x8E04FEDD28D42462uL, new InputArgument[3]
 			{
 				ped.Handle,
 				speechName,
@@ -294,7 +294,7 @@ public static class PedExtended
 			ped.LeaveGroup();
 			ped.SetRagdollOnCollision(toggle: false);
 			ped.Task.ClearAll();
-			PedGroup currentPedGroup = leader.CurrentPedGroup;
+			PedGroup currentPedGroup = leader.PedGroup;
 			currentPedGroup.SeparationRange = 2.1474836E+09f;
 			if (!currentPedGroup.Contains(leader))
 			{
@@ -310,7 +310,7 @@ public static class PedExtended
 			ped.IsPersistent = true;
 			ped.RelationshipGroup = leader.RelationshipGroup;
 			ped.NeverLeavesGroup = true;
-			ped.CurrentBlip?.Remove();
+			ped.AttachedBlip?.Delete();
 			Blip blip = ped.AddBlip();
 			blip.Color = BlipColor.Blue;
 			blip.Scale = 0.7f;
@@ -318,7 +318,7 @@ public static class PedExtended
 			EntityEventWrapper wrapper = new EntityEventWrapper(ped);
 			wrapper.Died += delegate(EntityEventWrapper sender, Entity entity)
 			{
-				entity.CurrentBlip?.Remove();
+				entity.AttachedBlip?.Delete();
 				wrapper.Dispose();
 			};
 			ped.PlayAmbientSpeech("GENERIC_HI");
@@ -337,7 +337,7 @@ public static class PedExtended
 
 	public static void SetCombatRange(this Ped ped, CombatRange range)
 	{
-		Function.Call(Hash._0x3C606747B23E497B, new InputArgument[2]
+		Function.Call((Hash)0x3C606747B23E497BuL, new InputArgument[2]
 		{
 			ped.Handle,
 			(int)range
@@ -346,7 +346,7 @@ public static class PedExtended
 
 	public static void SetCombatMovement(this Ped ped, CombatMovement movement)
 	{
-		Function.Call(Hash._0x4D9CA1009AFBD057, new InputArgument[2]
+		Function.Call((Hash)0x4D9CA1009AFBD057uL, new InputArgument[2]
 		{
 			ped.Handle,
 			(int)movement
@@ -355,36 +355,36 @@ public static class PedExtended
 
 	public static void ClearFleeAttributes(this Ped ped)
 	{
-		Function.Call(Hash._0x70A2D1137C8ED7C9, new InputArgument[3] { ped.Handle, 0, 0 });
+		Function.Call((Hash)0x70A2D1137C8ED7C9uL, new InputArgument[3] { ped.Handle, 0, 0 });
 	}
 
 	public static bool IsUsingAnyScenario(this Ped ped)
 	{
-		return Function.Call<bool>(Hash._0x57AB4A3080F85143, new InputArgument[1] { ped.Handle });
+		return Function.Call<bool>((Hash)0x57AB4A3080F85143uL, new InputArgument[1] { ped.Handle });
 	}
 
 	public static bool CanHearPlayer(this Ped ped, Player player)
 	{
-		return Function.Call<bool>(Hash._0xF297383AA91DCA29, new InputArgument[2] { player.Handle, ped.Handle });
+		return Function.Call<bool>((Hash)0xF297383AA91DCA29uL, new InputArgument[2] { player.Handle, ped.Handle });
 	}
 
 	public static void SetHearingRange(this Ped ped, float hearingRange)
 	{
-		Function.Call(Hash._0x33A8F7F7D5F7F33C, new InputArgument[2] { ped.Handle, hearingRange });
+		Function.Call((Hash)0x33A8F7F7D5F7F33CuL, new InputArgument[2] { ped.Handle, hearingRange });
 	}
 
 	public static bool IsCurrentWeaponSileced(this Ped ped)
 	{
-		return Function.Call<bool>(Hash._0x65F0C5AE05943EC7, new InputArgument[1] { ped.Handle });
+		return Function.Call<bool>((Hash)0x65F0C5AE05943EC7uL, new InputArgument[1] { ped.Handle });
 	}
 
 	public static void Jump(this Ped ped)
 	{
-		Function.Call(Hash._0x0AE4086104E067B1, new InputArgument[4] { ped.Handle, true, 0, 0 });
+		Function.Call((Hash)0x0AE4086104E067B1uL, new InputArgument[4] { ped.Handle, true, 0, 0 });
 	}
 
 	public static void SetToRagdoll(this Ped ped, int time)
 	{
-		Function.Call(Hash._0xAE99FB955581844A, new InputArgument[7] { ped.Handle, time, 0, 0, 0, 0, 0 });
+		Function.Call((Hash)0xAE99FB955581844AuL, new InputArgument[7] { ped.Handle, time, 0, 0, 0, 0, 0 });
 	}
 }

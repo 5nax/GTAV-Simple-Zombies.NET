@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using GTA;
-using NativeUI;
+using LemonUI.TimerBars;
 using ZombiesMod.Static;
 
 namespace ZombiesMod.PlayerManagement;
@@ -57,7 +57,7 @@ public class PlayerStats : Script
 			StatDisplayItem statDisplayItem = new StatDisplayItem
 			{
 				Stat = stat,
-				Bar = new BarTimerBar(stat.Name.ToUpper())
+				Bar = new TimerBarProgress(stat.Name.ToUpper())
 				{
 					ForegroundColor = Color.White,
 					BackgroundColor = Color.Gray
@@ -92,7 +92,7 @@ public class PlayerStats : Script
 		StatDisplayItem statDisplayItem = _statDisplay.Find((StatDisplayItem displayItem) => displayItem.Stat.Name == name);
 		statDisplayItem.Stat.Value += ((valueOverride <= 0f) ? item.RestorationAmount : valueOverride);
 		statDisplayItem.Stat.Sustained = true;
-		UI.Notify(notify, blinking: true);
+		Notifier.Show(notify, blinking: true);
 		if (statDisplayItem.Stat.Value > statDisplayItem.Stat.MaxVal)
 		{
 			statDisplayItem.Stat.Value = statDisplayItem.Stat.MaxVal;
@@ -135,7 +135,8 @@ public class PlayerStats : Script
 		{
 			StatDisplayItem statDisplayItem = _statDisplay[i];
 			Stat stat = statDisplayItem.Stat;
-			statDisplayItem.Bar.Percentage = stat.Value;
+			// LemonUI TimerBarProgress.Progress is 0..100; the stat is 0..MaxVal.
+			statDisplayItem.Bar.Progress = (stat.MaxVal > 0f) ? stat.Value / stat.MaxVal * 100f : 0f;
 			HandleReductionStat(stat, "Hunger", "You're ~r~starving~s~!", _hungerReductionMultiplier, ref _hungerDamageTimer, ref _hungerSustainTimer);
 			HandleReductionStat(stat, "Thirst", "You're ~r~dehydrated~s~!", _thirstReductionMultiplier, ref _thirstDamageTimer, ref _thirstSustainTimer);
 			HandleStamina(stat);
@@ -171,7 +172,7 @@ public class PlayerStats : Script
 		}
 		else
 		{
-			Game.DisableControlThisFrame(2, Control.Sprint);
+			Game.DisableControlThisFrame(Control.Sprint);
 			stat.Value += Game.LastFrameTime * _sprintReductionMultiplier;
 			if (stat.Value >= stat.MaxVal * 0.3f)
 			{
@@ -194,7 +195,7 @@ public class PlayerStats : Script
 				damageTimer = _statDamageInterval;
 				return;
 			}
-			UI.Notify(notification);
+			Notifier.Show(notification);
 			damageTimer += Game.LastFrameTime;
 			if (damageTimer >= _statDamageInterval)
 			{

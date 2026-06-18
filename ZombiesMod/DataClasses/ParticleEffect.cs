@@ -12,7 +12,7 @@ public class ParticleEffect : IHandleable, IDeletable
 	{
 		set
 		{
-			Function.Call(Hash._0x7F8F65877F88783B, new InputArgument[5] { Handle, value.R, value.G, value.B, true });
+			Function.Call((Hash)0x7F8F65877F88783BuL, new InputArgument[5] { Handle, value.R, value.G, value.B, true });
 		}
 	}
 
@@ -23,11 +23,11 @@ public class ParticleEffect : IHandleable, IDeletable
 
 	public bool Exists()
 	{
-		return Function.Call<bool>(Hash._0x74AFEF0D2E1E409B, new InputArgument[1] { Handle });
+		return Function.Call<bool>((Hash)0x74AFEF0D2E1E409BuL, new InputArgument[1] { Handle });
 	}
 
 	public void Delete()
 	{
-		Function.Call(Hash._0xC401503DFE8D53CF, new InputArgument[2] { Handle, 1 });
+		Function.Call((Hash)0xC401503DFE8D53CFuL, new InputArgument[2] { Handle, 1 });
 	}
 }

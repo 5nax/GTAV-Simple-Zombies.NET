@@ -25,13 +25,13 @@ public static class ZombieCreator
 		ped.AlwaysDiesOnLowHealth = false;
 		ped.SetAlertness(Alertness.Nuetral);
 		ped.SetCombatAttributes(CombatAttributes.AlwaysFight, enabled: true);
-		Function.Call(Hash._0x70A2D1137C8ED7C9, new InputArgument[3] { ped.Handle, 0, 0 });
+		Function.Call((Hash)0x70A2D1137C8ED7C9uL, new InputArgument[3] { ped.Handle, 0, 0 });
 		ped.SetConfigFlag(281, value: true);
 		ped.Task.WanderAround(ped.Position, ZombiePed.WanderRadius);
 		ped.AlwaysKeepTask = true;
 		ped.BlockPermanentEvents = true;
 		ped.IsPersistent = false;
-		ped.CurrentBlip?.Remove();
+		ped.AttachedBlip?.Delete();
 		ped.IsPersistent = true;
 		ped.RelationshipGroup = Relationships.InfectedRelationship;
 		float num = 0.055f;
@@ -39,7 +39,7 @@ public static class ZombieCreator
 		{
 			num = 0.5f;
 		}
-		TimeSpan currentDayTime = World.CurrentDayTime;
+		TimeSpan currentDayTime = World.CurrentTimeOfDay;
 		if (currentDayTime.Hours >= 20 || currentDayTime.Hours <= 3)
 		{
 			num = 0.4f;
@@ -59,7 +59,7 @@ public static class ZombieCreator
 		{
 			return false;
 		}
-		TimeSpan currentDayTime = World.CurrentDayTime;
+		TimeSpan currentDayTime = World.CurrentTimeOfDay;
 		return currentDayTime.Hours >= 20 || currentDayTime.Hours <= 3;
 	}
 }

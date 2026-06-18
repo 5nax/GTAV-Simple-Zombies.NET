@@ -65,14 +65,14 @@ public class ItemPreview
 			Prop prop = World.CreateProp(_currnetPropHash, default(Vector3), default(Vector3), dynamic: false, placeOnGround: false);
 			if (prop == null)
 			{
-				UI.Notify($"Failed to load prop, even after request.\nProp Name: {_currnetPropHash}");
+				Notifier.Show($"Failed to load prop, even after request.\nProp Name: {_currnetPropHash}");
 				_resultProp = null;
 				_preview = false;
 				PreviewComplete = true;
 			}
 			else
 			{
-				prop.HasCollision = false;
+				prop.IsCollisionEnabled = false;
 				_currentPreview = prop;
 				_currentPreview.Alpha = 150;
 				Database.PlayerPed.Weapons.Select(WeaponHash.Unarmed, equipNow: true);
@@ -81,18 +81,18 @@ public class ItemPreview
 			return;
 		}
 		UiExtended.DisplayHelpTextThisFrame("Press ~INPUT_AIM~ to cancel.\nPress ~INPUT_ATTACK~ to place the item.", ignoreMenus: true);
-		Game.DisableControlThisFrame(2, Control.Aim);
-		Game.DisableControlThisFrame(2, Control.Attack);
-		Game.DisableControlThisFrame(2, Control.Attack2);
-		Game.DisableControlThisFrame(2, Control.ParachuteBrakeLeft);
-		Game.DisableControlThisFrame(2, Control.ParachuteBrakeRight);
-		Game.DisableControlThisFrame(2, Control.Cover);
-		Game.DisableControlThisFrame(2, Control.Phone);
-		Game.DisableControlThisFrame(2, Control.PhoneUp);
-		Game.DisableControlThisFrame(2, Control.PhoneDown);
-		Game.DisableControlThisFrame(2, Control.Sprint);
+		Game.DisableControlThisFrame(Control.Aim);
+		Game.DisableControlThisFrame(Control.Attack);
+		Game.DisableControlThisFrame(Control.Attack2);
+		Game.DisableControlThisFrame(Control.ParachuteBrakeLeft);
+		Game.DisableControlThisFrame(Control.ParachuteBrakeRight);
+		Game.DisableControlThisFrame(Control.Cover);
+		Game.DisableControlThisFrame(Control.Phone);
+		Game.DisableControlThisFrame(Control.PhoneUp);
+		Game.DisableControlThisFrame(Control.PhoneDown);
+		Game.DisableControlThisFrame(Control.Sprint);
 		GameExtended.DisableWeaponWheel();
-		if (Game.IsDisabledControlPressed(2, Control.Aim))
+		if (Ctrl.DisabledPressed(Control.Aim))
 		{
 			_currentPreview.Delete();
 			_currentPreview = (_resultProp = null);
@@ -103,39 +103,39 @@ public class ItemPreview
 		}
 		Vector3 position = GameplayCamera.Position;
 		Vector3 direction = GameplayCamera.Direction;
-		Vector3 hitCoords = World.Raycast(position, position + direction * 15f, IntersectOptions.Everything, Database.PlayerPed).HitCoords;
+		Vector3 hitCoords = World.Raycast(position, position + direction * 15f, IntersectFlags.Everything, Database.PlayerPed).HitCoords;
 		if (hitCoords != Vector3.Zero && hitCoords.DistanceTo(Database.PlayerPosition) > 1.5f)
 		{
 			DrawScaleForms();
-			float num = (Game.IsControlPressed(2, Control.Sprint) ? 1.5f : 1f);
-			if (Game.IsControlPressed(2, Control.ParachuteBrakeLeft))
+			float num = (Game.IsControlPressed(Control.Sprint) ? 1.5f : 1f);
+			if (Game.IsControlPressed(Control.ParachuteBrakeLeft))
 			{
 				Vector3 rotation = _currentPreview.Rotation;
 				rotation.Z += Game.LastFrameTime * 50f * num;
 				_currentPreview.Rotation = rotation;
 			}
-			else if (Game.IsControlPressed(2, Control.ParachuteBrakeRight))
+			else if (Game.IsControlPressed(Control.ParachuteBrakeRight))
 			{
 				Vector3 rotation2 = _currentPreview.Rotation;
 				rotation2.Z -= Game.LastFrameTime * 50f * num;
 				_currentPreview.Rotation = rotation2;
 			}
-			if (Game.IsControlPressed(2, Control.PhoneUp))
+			if (Game.IsControlPressed(Control.PhoneUp))
 			{
 				_currentOffset.Z += Game.LastFrameTime * num;
 			}
-			else if (Game.IsControlPressed(2, Control.PhoneDown))
+			else if (Game.IsControlPressed(Control.PhoneDown))
 			{
 				_currentOffset.Z -= Game.LastFrameTime * num;
 			}
 			_currentPreview.Position = hitCoords + _currentOffset;
 			_currentPreview.IsVisible = true;
-			if (Game.IsDisabledControlJustPressed(2, Control.Attack))
+			if (Ctrl.DisabledJustPressed(Control.Attack))
 			{
-				_currentPreview.ResetAlpha();
+				_currentPreview.ResetOpacity();
 				_resultProp = _currentPreview;
-				_resultProp.HasCollision = true;
-				_resultProp.FreezePosition = !_isDoor;
+				_resultProp.IsCollisionEnabled = true;
+				_resultProp.IsPositionFrozen = !_isDoor;
 				_preview = false;
 				_currentPreview = null;
 				_currnetPropHash = string.Empty;
@@ -155,11 +155,11 @@ public class ItemPreview
 		scaleform.CallFunction("CLEAR_ALL");
 		scaleform.CallFunction("TOGGLE_MOUSE_BUTTONS", 0);
 		scaleform.CallFunction("CREATE_CONTAINER");
-		scaleform.CallFunction("SET_DATA_SLOT", 0, Function.Call<string>(Hash._0x0499D7B09FC9B407, new InputArgument[3] { 2, 152, 0 }), string.Empty);
-		scaleform.CallFunction("SET_DATA_SLOT", 1, Function.Call<string>(Hash._0x0499D7B09FC9B407, new InputArgument[3] { 2, 153, 0 }), "Rotate");
-		scaleform.CallFunction("SET_DATA_SLOT", 2, Function.Call<string>(Hash._0x0499D7B09FC9B407, new InputArgument[3] { 2, 172, 0 }), string.Empty);
-		scaleform.CallFunction("SET_DATA_SLOT", 3, Function.Call<string>(Hash._0x0499D7B09FC9B407, new InputArgument[3] { 2, 173, 0 }), "Lift/Lower");
-		scaleform.CallFunction("SET_DATA_SLOT", 4, Function.Call<string>(Hash._0x0499D7B09FC9B407, new InputArgument[3] { 2, 21, 0 }), "Accelerate");
+		scaleform.CallFunction("SET_DATA_SLOT", 0, Function.Call<string>((Hash)0x0499D7B09FC9B407uL, new InputArgument[3] { 2, 152, 0 }), string.Empty);
+		scaleform.CallFunction("SET_DATA_SLOT", 1, Function.Call<string>((Hash)0x0499D7B09FC9B407uL, new InputArgument[3] { 2, 153, 0 }), "Rotate");
+		scaleform.CallFunction("SET_DATA_SLOT", 2, Function.Call<string>((Hash)0x0499D7B09FC9B407uL, new InputArgument[3] { 2, 172, 0 }), string.Empty);
+		scaleform.CallFunction("SET_DATA_SLOT", 3, Function.Call<string>((Hash)0x0499D7B09FC9B407uL, new InputArgument[3] { 2, 173, 0 }), "Lift/Lower");
+		scaleform.CallFunction("SET_DATA_SLOT", 4, Function.Call<string>((Hash)0x0499D7B09FC9B407uL, new InputArgument[3] { 2, 21, 0 }), "Accelerate");
 		scaleform.CallFunction("DRAW_INSTRUCTIONAL_BUTTONS", -1);
 		scaleform.Render2D();
 	}

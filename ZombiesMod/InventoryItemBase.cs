@@ -1,5 +1,5 @@
 using System;
-using NativeUI;
+using LemonUI.Menus;
 
 namespace ZombiesMod;
 
@@ -7,7 +7,7 @@ namespace ZombiesMod;
 public class InventoryItemBase : IIdentifier
 {
 	[NonSerialized]
-	public UIMenuItem MenuItem;
+	public NativeItem MenuItem;
 
 	public int Amount { get; set; }
 
@@ -27,6 +27,6 @@ public class InventoryItemBase : IIdentifier
 
 	public void CreateMenuItem()
 	{
-		MenuItem = new UIMenuItem(Id, Description);
+		MenuItem = new NativeItem(Id, Description);
 	}
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using GTA;
 using GTA.Math;
 using GTA.Native;
-using NativeUI;
+using LemonUI.Menus;
 using ZombiesMod.Extensions;
 using ZombiesMod.PlayerManagement;
 using ZombiesMod.Static;
@@ -20,15 +20,18 @@ public class MapInteraction : Script
 
 	private readonly int _sleepHours = 8;
 
-	private readonly UIMenu _weaponsMenu = new UIMenu("Weapon Crate", "SELECT AN OPTION");
+	private readonly NativeMenu _weaponsMenu = new NativeMenu("Weapon Crate", "SELECT AN OPTION");
 
-	private readonly UIMenu _storageMenu;
+	private readonly NativeMenu _storageMenu = new NativeMenu("Weapon Crate", "Storage");
 
-	private readonly UIMenu _myWeaponsMenu;
+	private readonly NativeMenu _myWeaponsMenu = new NativeMenu("Weapon Crate", "Give");
 
-	private readonly UIMenu _craftWeaponsMenu = new UIMenu("Work Bench", "SELECT AN OPTION");
+	private readonly NativeMenu _craftWeaponsMenu = new NativeMenu("Work Bench", "SELECT AN OPTION");
 
 	private readonly Dictionary<WeaponGroup, int> _requiredAmountDictionary;
+
+	// The crate currently being interacted with; submenus populate from this on open.
+	private MapProp _currentCrate;
 
 	private static Ped PlayerPed => Database.PlayerPed;
 
@@ -39,64 +42,73 @@ public class MapInteraction : Script
 		PlayerMap.Interacted += MapOnInteracted;
 		MenuConrtoller.MenuPool.Add(_weaponsMenu);
 		MenuConrtoller.MenuPool.Add(_craftWeaponsMenu);
-		_storageMenu = MenuConrtoller.MenuPool.AddSubMenu(_weaponsMenu, "Storage");
-		_myWeaponsMenu = MenuConrtoller.MenuPool.AddSubMenu(_weaponsMenu, "Give");
-		_enemyRangeForSleeping = base.Settings.GetValue("map_interaction", "enemy_range_for_sleeping", _enemyRangeForSleeping);
-		_sleepHours = base.Settings.GetValue("map_interaction", "sleep_hours", _sleepHours);
-		base.Settings.SetValue("map_interaction", "enemy_range_for_sleeping", _enemyRangeForSleeping);
-		base.Settings.SetValue("map_interaction", "sleep_hours", _sleepHours);
-		_requiredAmountDictionary = new Dictionary<WeaponGroup, int>
+		MenuConrtoller.MenuPool.Add(_storageMenu);
+		MenuConrtoller.MenuPool.Add(_myWeaponsMenu);
+		_weaponsMenu.AddSubMenu(_storageMenu, "Storage");
+		_weaponsMenu.AddSubMenu(_myWeaponsMenu, "Give");
+
+		// Populate the trade submenus on open. Subscribed ONCE here (the original
+		// re-added an OnMenuChange handler on every crate use, leaking delegates).
+		_storageMenu.Shown += delegate
 		{
+			if (_currentCrate?.Weapons != null)
 			{
-				WeaponGroup.Sniper,
-				2
-			},
-			{
-				WeaponGroup.Heavy,
-				5
-			},
-			{
-				WeaponGroup.MG,
-				3
-			},
-			{
-				WeaponGroup.PetrolCan,
-				1
+				PopulateTradeMenu(_currentCrate, _currentCrate.Weapons, _storageMenu, giveToPlayer: true);
 			}
 		};
-		base.Aborted += OnAborted;
+		_myWeaponsMenu.Shown += delegate
+		{
+			PopulateTradeMenu(_currentCrate, GetPlayerWeapons(), _myWeaponsMenu, giveToPlayer: false);
+		};
+
+		_enemyRangeForSleeping = Settings.GetValue("map_interaction", "enemy_range_for_sleeping", _enemyRangeForSleeping);
+		_sleepHours = Settings.GetValue("map_interaction", "sleep_hours", _sleepHours);
+		Settings.SetValue("map_interaction", "enemy_range_for_sleeping", _enemyRangeForSleeping);
+		Settings.SetValue("map_interaction", "sleep_hours", _sleepHours);
+		_requiredAmountDictionary = new Dictionary<WeaponGroup, int>
+		{
+			{ WeaponGroup.Sniper, 2 },
+			{ WeaponGroup.Heavy, 5 },
+			{ WeaponGroup.MG, 3 },
+			{ WeaponGroup.PetrolCan, 1 }
+		};
+		Aborted += OnAborted;
 	}
 
 	private static void OnAborted(object sender, EventArgs eventArgs)
 	{
 		PlayerPed.IsVisible = true;
-		PlayerPed.FreezePosition = false;
+		PlayerPed.IsPositionFrozen = false;
 		Player.CanControlCharacter = true;
 		if (!PlayerPed.IsDead)
 		{
-			Game.FadeScreenIn(0);
+			GTA.UI.Screen.FadeIn(0);
 		}
 	}
 
 	private void MapOnInteracted(MapProp mapProp, InventoryItemBase inventoryItem)
 	{
-		if (inventoryItem is BuildableInventoryItem buildableInventoryItem)
+		if (!(inventoryItem is BuildableInventoryItem buildableInventoryItem))
 		{
-			switch (buildableInventoryItem.Id)
+			return;
+		}
+		switch (buildableInventoryItem.Id)
+		{
+		case "Tent":
+			Sleep(mapProp.Position);
+			break;
+		case "Weapons Crate":
+			UseWeaponsCrate(mapProp);
+			break;
+		case "Work Bench":
+			CraftAmmo();
+			break;
+		}
+		if (buildableInventoryItem.IsDoor)
+		{
+			Prop prop = (Prop)GTA.Entity.FromHandle(mapProp.Handle);
+			if (prop.Exists())
 			{
-			case "Tent":
-				Sleep(mapProp.Position);
-				break;
-			case "Weapons Crate":
-				UseWeaponsCrate(mapProp);
-				break;
-			case "Work Bench":
-				CraftAmmo();
-				break;
-			}
-			if (buildableInventoryItem.IsDoor)
-			{
-				Prop prop = new Prop(mapProp.Handle);
 				prop.SetStateOfDoor(!prop.GetDoorLockState(), DoorState.Closed);
 			}
 		}
@@ -109,48 +121,39 @@ public class MapInteraction : Script
 		source = source.Where((WeaponGroup w) => w != WeaponGroup.PetrolCan && w != WeaponGroup.Unarmed && w != WeaponGroup.Melee && w != (WeaponGroup)3352383570u).ToArray();
 		List<WeaponGroup> list = source.ToList();
 		list.Add(WeaponGroup.AssaultRifle);
-		source = list.ToArray();
-		WeaponGroup[] array = source;
-		for (int num = 0; num < array.Length; num++)
+		foreach (WeaponGroup weaponGroup in list)
 		{
-			WeaponGroup weaponGroup = array[num];
-			UIMenuItem uIMenuItem = new UIMenuItem(string.Format("{0}", (weaponGroup == WeaponGroup.AssaultRifle) ? "Assult Rifle" : weaponGroup.ToString()), $"Craft ammo for {weaponGroup}");
-			uIMenuItem.SetLeftBadge(UIMenuItem.BadgeStyle.Ammo);
-			int required = GetRequiredPartsForWeaponGroup(weaponGroup);
-			uIMenuItem.Description = $"Required Weapon Parts: ~y~{required}~s~";
-			_craftWeaponsMenu.AddItem(uIMenuItem);
-			uIMenuItem.Activated += delegate
+			WeaponGroup group = weaponGroup;
+			int required = GetRequiredPartsForWeaponGroup(group);
+			NativeItem item = new NativeItem(
+				(group == WeaponGroup.AssaultRifle) ? "Assault Rifle" : group.ToString(),
+				$"Required Weapon Parts: ~y~{required}~s~");
+			_craftWeaponsMenu.Add(item);
+			item.Activated += delegate
 			{
-				InventoryItemBase inventoryItemBase = PlayerInventory.Instance.ItemFromName("Weapon Parts");
-				if (inventoryItemBase != null)
+				InventoryItemBase parts = PlayerInventory.Instance.ItemFromName("Weapon Parts");
+				if (parts == null)
 				{
-					if (inventoryItemBase.Amount >= required)
-					{
-						WeaponHash[] array2 = (WeaponHash[])Enum.GetValues(typeof(WeaponHash));
-						WeaponHash hash = Array.Find(array2, (WeaponHash h) => PlayerPed.Weapons.HasWeapon(h) && PlayerPed.Weapons[h].Group == weaponGroup);
-						GTA.Weapon weapon = PlayerPed.Weapons[hash];
-						if (weapon != null)
-						{
-							int num2 = 10 * required;
-							if (weapon.Ammo + num2 <= weapon.MaxAmmo)
-							{
-								PlayerPed.Weapons.Select(weapon);
-								if (weapon.Ammo + num2 > weapon.MaxAmmo)
-								{
-									weapon.Ammo = weapon.MaxAmmo;
-								}
-								else
-								{
-									weapon.Ammo += num2;
-								}
-								PlayerInventory.Instance.AddItem(inventoryItemBase, -required, ItemType.Resource);
-							}
-						}
-					}
-					else
-					{
-						UI.Notify("Not enough weapon parts.");
-					}
+					return;
+				}
+				if (parts.Amount < required)
+				{
+					Notifier.Show("Not enough weapon parts.");
+					return;
+				}
+				WeaponHash[] all = (WeaponHash[])Enum.GetValues(typeof(WeaponHash));
+				WeaponHash hash = Array.Find(all, (WeaponHash h) => PlayerPed.Weapons.HasWeapon(h) && PlayerPed.Weapons[h].Group == group);
+				GTA.Weapon weapon = PlayerPed.Weapons[hash];
+				if (weapon == null)
+				{
+					return;
+				}
+				int ammo = AmmoPerPart * required;
+				if (weapon.Ammo + ammo <= weapon.MaxAmmo)
+				{
+					PlayerPed.Weapons.Select(weapon);
+					weapon.Ammo = Math.Min(weapon.Ammo + ammo, weapon.MaxAmmo);
+					PlayerInventory.Instance.AddItem(parts, -required, ItemType.Resource);
 				}
 			};
 		}
@@ -159,7 +162,7 @@ public class MapInteraction : Script
 
 	private int GetRequiredPartsForWeaponGroup(WeaponGroup group)
 	{
-		return (!_requiredAmountDictionary.ContainsKey(group)) ? 1 : _requiredAmountDictionary[group];
+		return _requiredAmountDictionary.ContainsKey(group) ? _requiredAmountDictionary[group] : 1;
 	}
 
 	private void UseWeaponsCrate(MapProp prop)
@@ -168,74 +171,62 @@ public class MapInteraction : Script
 		{
 			return;
 		}
-		_weaponsMenu.OnMenuChange += delegate(UIMenu oldMenu, UIMenu newMenu, bool forward)
-		{
-			if (newMenu == _storageMenu)
-			{
-				TradeOffWeapons(prop, prop.Weapons, _storageMenu, giveToPlayer: true);
-			}
-			else if (newMenu == _myWeaponsMenu)
-			{
-				List<Weapon> playerWeapons = new List<Weapon>();
-				WeaponHash[] source = (WeaponHash[])Enum.GetValues(typeof(WeaponHash));
-				WeaponComponent[] weaponComponents = (WeaponComponent[])Enum.GetValues(typeof(WeaponComponent));
-				source.ToList().ForEach(delegate(WeaponHash hash)
-				{
-					if (hash != WeaponHash.Unarmed && PlayerPed.Weapons.HasWeapon(hash))
-					{
-						GTA.Weapon weapon = PlayerPed.Weapons[hash];
-						WeaponComponent[] components = weaponComponents.Where((WeaponComponent c) => PlayerPed.Weapons[hash].IsComponentActive(c)).ToArray();
-						Weapon item = new Weapon(weapon.Ammo, hash, components);
-						playerWeapons.Add(item);
-					}
-				});
-				TradeOffWeapons(prop, playerWeapons, _myWeaponsMenu, giveToPlayer: false);
-			}
-		};
+		_currentCrate = prop;
 		_weaponsMenu.Visible = !_weaponsMenu.Visible;
 	}
 
-	private static void TradeOffWeapons(MapProp item, List<Weapon> weapons, UIMenu currentMenu, bool giveToPlayer)
+	private static List<Weapon> GetPlayerWeapons()
 	{
-		UIMenuItem uIMenuItem = new UIMenuItem("Back");
-		uIMenuItem.Activated += delegate(UIMenu sender, UIMenuItem selectedItem)
+		List<Weapon> playerWeapons = new List<Weapon>();
+		WeaponComponentHash[] allComponents = (WeaponComponentHash[])Enum.GetValues(typeof(WeaponComponentHash));
+		foreach (WeaponHash hash in (WeaponHash[])Enum.GetValues(typeof(WeaponHash)))
 		{
-			sender.GoBack();
-		};
-		currentMenu.Clear();
-		currentMenu.AddItem(uIMenuItem);
-		Action notify = delegate
-		{
-			PlayerMap.Instance.NotifyListChanged();
-		};
-		weapons.ForEach(delegate(Weapon weapon)
-		{
-			UIMenuItem uIMenuItem2 = new UIMenuItem($"{weapon.Hash}");
-			currentMenu.AddItem(uIMenuItem2);
-			uIMenuItem2.Activated += delegate
+			if (hash != WeaponHash.Unarmed && PlayerPed.Weapons.HasWeapon(hash))
 			{
-				currentMenu.RemoveItemAt(currentMenu.CurrentSelection);
-				currentMenu.RefreshIndex();
+				GTA.Weapon weapon = PlayerPed.Weapons[hash];
+				WeaponComponentHash[] components = allComponents.Where((WeaponComponentHash c) => weapon.Components[c].Active).ToArray();
+				playerWeapons.Add(new Weapon(weapon.Ammo, hash, components));
+			}
+		}
+		return playerWeapons;
+	}
+
+	private static void PopulateTradeMenu(MapProp crate, List<Weapon> weapons, NativeMenu menu, bool giveToPlayer)
+	{
+		if (crate == null)
+		{
+			return;
+		}
+		menu.Clear();
+		foreach (Weapon weapon in weapons.ToList())
+		{
+			Weapon w = weapon;
+			NativeItem item = new NativeItem(w.Hash.ToString());
+			menu.Add(item);
+			item.Activated += delegate
+			{
+				menu.Remove(item);
 				if (giveToPlayer)
 				{
-					PlayerPed.Weapons.Give(weapon.Hash, 0, equipNow: true, isAmmoLoaded: true);
-					PlayerPed.Weapons[weapon.Hash].Ammo = weapon.Ammo;
-					weapon.Components.ToList().ForEach(delegate(WeaponComponent component)
+					PlayerPed.Weapons.Give(w.Hash, 0, equipNow: true, isAmmoLoaded: true);
+					PlayerPed.Weapons[w.Hash].Ammo = w.Ammo;
+					if (w.Components != null)
 					{
-						PlayerPed.Weapons[weapon.Hash].SetComponent(component, on: true);
-					});
-					item.Weapons.Remove(weapon);
-					notify();
+						foreach (WeaponComponentHash component in w.Components)
+						{
+							PlayerPed.Weapons[w.Hash].Components[component].Active = true;
+						}
+					}
+					crate.Weapons.Remove(w);
 				}
 				else
 				{
-					PlayerPed.Weapons.Remove(weapon.Hash);
-					item.Weapons.Add(weapon);
-					notify();
+					PlayerPed.Weapons.Remove(w.Hash);
+					crate.Weapons.Add(w);
 				}
+				PlayerMap.Instance.NotifyListChanged();
 			};
-		});
-		currentMenu.RefreshIndex();
+		}
 	}
 
 	private void Sleep(Vector3 position)
@@ -243,53 +234,55 @@ public class MapInteraction : Script
 		Ped[] array = World.GetNearbyPeds(position, _enemyRangeForSleeping).Where(IsEnemy).ToArray();
 		if (!array.Any())
 		{
-			TimeSpan currentDayTime = World.CurrentDayTime + new TimeSpan(0, _sleepHours, 0, 0);
+			TimeSpan currentDayTime = World.CurrentTimeOfDay + new TimeSpan(0, _sleepHours, 0, 0);
 			PlayerPed.IsVisible = false;
 			Player.CanControlCharacter = false;
-			PlayerPed.FreezePosition = true;
-			Game.FadeScreenOut(2000);
-			Script.Wait(2000);
-			World.CurrentDayTime = currentDayTime;
+			PlayerPed.IsPositionFrozen = true;
+			GTA.UI.Screen.FadeOut(2000);
+			Wait(2000);
+			World.CurrentTimeOfDay = currentDayTime;
 			PlayerPed.IsVisible = true;
 			Player.CanControlCharacter = true;
-			PlayerPed.FreezePosition = false;
+			PlayerPed.IsPositionFrozen = false;
 			PlayerPed.ClearBloodDamage();
 			Weather[] source = (Weather[])Enum.GetValues(typeof(Weather));
 			source = source.Where((Weather w) => w != Weather.Blizzard && w != Weather.Christmas && w != Weather.Snowing && w != Weather.Snowlight && w != Weather.Unknown).ToArray();
-			Weather weather = source[Database.Random.Next(source.Length)];
-			World.Weather = weather;
-			Script.Wait(2000);
-			Game.FadeScreenIn(2000);
+			World.Weather = source[Database.Random.Next(source.Length)];
+			Wait(2000);
+			GTA.UI.Screen.FadeIn(2000);
 		}
 		else
 		{
-			UI.Notify("There are ~r~enemies~s~ nearby.");
-			UI.Notify("Marking them on your map.");
+			Notifier.Show("There are ~r~enemies~s~ nearby.");
+			Notifier.Show("Marking them on your map.");
 			Array.ForEach(array, AddBlip);
 		}
 	}
 
 	private static void AddBlip(Ped ped)
 	{
-		if (!ped.CurrentBlip.Exists())
+		if (!ped.AttachedBlip.Exists())
 		{
 			Blip blip = ped.AddBlip();
 			blip.Name = "Enemy Ped";
 			EntityEventWrapper entityEventWrapper = new EntityEventWrapper(ped);
 			entityEventWrapper.Died += delegate(EntityEventWrapper sender, Entity entity)
 			{
-				entity.CurrentBlip?.Remove();
+				entity.AttachedBlip?.Delete();
 				sender.Dispose();
 			};
 			entityEventWrapper.Aborted += delegate(EntityEventWrapper sender, Entity entity)
 			{
-				entity.CurrentBlip?.Remove();
+				entity.AttachedBlip?.Delete();
 			};
 		}
 	}
 
 	private static bool IsEnemy(Ped ped)
 	{
-		return (ped.IsHuman && !ped.IsDead && ped.GetRelationshipWithPed(PlayerPed) == Relationship.Hate) || ped.IsInCombatAgainst(PlayerPed);
+		// Precedence fix: the alive/human checks now also gate the in-combat case
+		// (previously a dead/animal ped flagged in-combat counted as an enemy).
+		return ped.IsHuman && !ped.IsDead
+			&& (ped.GetRelationshipWithPed(PlayerPed) == Relationship.Hate || ped.IsInCombatAgainst(PlayerPed));
 	}
 }

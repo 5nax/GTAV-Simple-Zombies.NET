@@ -51,7 +51,7 @@ public class PlayerVehicles : Script
 			Vehicle vehicle = World.CreateVehicle(item.Hash, item.Position);
 			if (vehicle == null)
 			{
-				UI.Notify("Failed to load vehicle.");
+				Notifier.Show("Failed to load vehicle.");
 				break;
 			}
 			vehicle.PrimaryColor = item.PrimaryColor;
@@ -89,7 +89,7 @@ public class PlayerVehicles : Script
 			vehicle.WindowTint = data.WindowTint;
 			vehicle.WheelType = data.WheelType;
 			vehicle.NeonLightsColor = data.NeonColor;
-			Function.Call(Hash._0x60BF608F1B8CD1B6, new InputArgument[2] { vehicle.Handle, data.Livery });
+			Function.Call((Hash)0x60BF608F1B8CD1B6uL, new InputArgument[2] { vehicle.Handle, data.Livery });
 		}
 	}
 
@@ -101,7 +101,7 @@ public class PlayerVehicles : Script
 			Serializer.Serialize("./scripts/Vehicles.dat", _vehicleCollection);
 			if (notify)
 			{
-				UI.Notify((_vehicleCollection.Count <= 0) ? "No vehicles." : "~p~Vehicles~s~ saved!");
+				Notifier.Show((_vehicleCollection.Count <= 0) ? "No vehicles." : "~p~Vehicles~s~ saved!");
 			}
 		}
 	}
@@ -159,7 +159,7 @@ public class PlayerVehicles : Script
 		});
 		VehicleToggleMod[] source3 = (VehicleToggleMod[])Enum.GetValues(typeof(VehicleToggleMod));
 		source3 = source3.Where(vehicle.IsToggleModOn).ToArray();
-		VehicleData item = new VehicleData(vehicle.Handle, vehicle.Model.Hash, vehicle.Rotation, vehicle.Position, vehicle.PrimaryColor, vehicle.SecondaryColor, vehicle.Health, vehicle.EngineHealth, vehicle.Heading, source, mods, source3, vehicle.WindowTint, vehicle.WheelType, vehicle.NeonLightsColor, Function.Call<int>(Hash._0x2BB9230590DA5E8A, new InputArgument[1] { vehicle.Handle }), Function.Call<bool>(Hash._0xB3924ECD70E095DC, new InputArgument[2] { vehicle.Handle, 23 }), Function.Call<bool>(Hash._0xB3924ECD70E095DC, new InputArgument[2] { vehicle.Handle, 24 }));
+		VehicleData item = new VehicleData(vehicle.Handle, vehicle.Model.Hash, vehicle.Rotation, vehicle.Position, vehicle.PrimaryColor, vehicle.SecondaryColor, vehicle.Health, vehicle.EngineHealth, vehicle.Heading, source, mods, source3, vehicle.WindowTint, vehicle.WheelType, vehicle.NeonLightsColor, Function.Call<int>((Hash)0x2BB9230590DA5E8AuL, new InputArgument[1] { vehicle.Handle }), Function.Call<bool>((Hash)0xB3924ECD70E095DCuL, new InputArgument[2] { vehicle.Handle, 23 }), Function.Call<bool>((Hash)0xB3924ECD70E095DCuL, new InputArgument[2] { vehicle.Handle, 24 }));
 		_vehicleCollection.Add(item);
 		_vehicles.Add(vehicle);
 		vehicle.IsPersistent = true;
@@ -184,9 +184,9 @@ public class PlayerVehicles : Script
 
 	private void WrapperOnDied(EntityEventWrapper sender, Entity entity)
 	{
-		UI.Notify("Your vehicle was ~r~destroyed~s~!");
+		Notifier.Show("Your vehicle was ~r~destroyed~s~!");
 		_vehicleCollection.Remove(_vehicleCollection.ToList().Find((VehicleData v) => v.Handle == entity.Handle));
-		entity.CurrentBlip?.Remove();
+		entity.AttachedBlip?.Delete();
 		sender.Dispose();
 	}
 }

@@ -5,7 +5,8 @@ using System.Text;
 using GTA;
 using GTA.Math;
 using GTA.Native;
-using NativeUI;
+using LemonUI.Menus;
+using LemonUI.Scaleform;
 using ZombiesMod.Static;
 
 namespace ZombiesMod;
@@ -29,10 +30,10 @@ public class Inventory
 	public readonly MenuType MenuType;
 
 	[NonSerialized]
-	public UIMenu InventoryMenu;
+	public NativeMenu InventoryMenu;
 
 	[NonSerialized]
-	public UIMenu ResourceMenu;
+	public NativeMenu ResourceMenu;
 
 	private static Vector3 PlayerPosition => Database.PlayerPosition;
 
@@ -83,7 +84,7 @@ public class Inventory
 			GTA.Weapon current = PlayerPed.Weapons.Current;
 			if (current.Hash == WeaponHash.Unarmed)
 			{
-				UI.Notify("No weapon selected!");
+				Notifier.Show("No weapon selected!");
 				return false;
 			}
 			WeaponComponentHash[] array = new WeaponComponentHash[5]
@@ -97,17 +98,17 @@ public class Inventory
 			WeaponComponentHash[] array2 = array;
 			foreach (WeaponComponentHash weaponComponent in array2)
 			{
-				if (Function.Call<bool>(Hash._0x5CEE3DF569CECAB0, new InputArgument[2]
+				if (Function.Call<bool>((Hash)0x5CEE3DF569CECAB0uL, new InputArgument[2]
 				{
 					(uint)current.Hash,
 					(uint)weaponComponent
-				}) && !current.IsComponentActive(weaponComponent))
+				}) && !current.Components[weaponComponent].Active)
 				{
-					current.SetComponent(weaponComponent, on: true);
+					current.Components[weaponComponent].Active = true;
 					return true;
 				}
 			}
-			UI.Notify("You can't equip this right now.");
+			Notifier.Show("You can't equip this right now.");
 			return false;
 		})
 		{
@@ -235,7 +236,7 @@ public class Inventory
 		};
 		CraftableInventoryItem craftableInventoryItem2 = new CraftableInventoryItem(0, 10, "Vehicle Repair Kit", "Used to repair vehicle engines.", delegate
 		{
-			UI.Notify("You can only use this when repairing a vehicle.");
+			Notifier.Show("You can only use this when repairing a vehicle.");
 			return false;
 		})
 		{
@@ -277,19 +278,17 @@ public class Inventory
 
 	public void LoadMenus()
 	{
-		InventoryMenu = new UIMenu("Inventory", "SELECT AN ITEM");
-		ResourceMenu = new UIMenu("Resources", "SELECT AN ITEM");
+		InventoryMenu = new NativeMenu("Inventory", "SELECT AN ITEM");
+		ResourceMenu = new NativeMenu("Resources", "SELECT AN ITEM");
 		AddItemsToMenu(InventoryMenu, Items, ItemType.Item);
 		AddItemsToMenu(ResourceMenu, Resources, ItemType.Resource);
 		MenuConrtoller.MenuPool.Add(InventoryMenu);
 		MenuConrtoller.MenuPool.Add(ResourceMenu);
 		RefreshMenu();
-		InventoryMenu.RefreshIndex();
-		ResourceMenu.RefreshIndex();
 		if (MenuType == MenuType.Player)
 		{
-			InventoryMenu.AddInstructionalButton(new InstructionalButton(Control.Enter, "Blueprint"));
-			InventoryMenu.AddInstructionalButton(new InstructionalButton(Control.LookBehind, "Craft"));
+			InventoryMenu.Buttons.Add(new InstructionalButton("Blueprint", Control.Enter));
+			InventoryMenu.Buttons.Add(new InstructionalButton("Craft", Control.LookBehind));
 		}
 	}
 
@@ -305,10 +304,10 @@ public class Inventory
 		{
 			return;
 		}
-		Game.DisableControlThisFrame(2, Control.Enter);
-		Game.DisableControlThisFrame(2, Control.VehicleExit);
-		Game.DisableControlThisFrame(2, Control.LookBehind);
-		if (Game.IsDisabledControlJustPressed(2, Control.Enter))
+		Game.DisableControlThisFrame(Control.Enter);
+		Game.DisableControlThisFrame(Control.VehicleExit);
+		Game.DisableControlThisFrame(Control.LookBehind);
+		if (Ctrl.DisabledJustPressed(Control.Enter))
 		{
 			ICraftable selectedInventoryItem = GetSelectedInventoryItem<ICraftable>();
 			if (selectedInventoryItem == null)
@@ -322,10 +321,10 @@ public class Inventory
 				{
 					str.Append(string.Format("{0}{1}~s~ / {2} {3}\n", (i.Resource.Amount >= i.RequiredAmount) ? "~g~" : "~r~", i.Resource.Amount, i.RequiredAmount, i.Resource.Id));
 				});
-				UI.Notify(str.ToString());
+				Notifier.Show(str.ToString());
 			}
 		}
-		else if (Game.IsDisabledControlJustPressed(2, Control.LookBehind))
+		else if (Ctrl.DisabledJustPressed(Control.LookBehind))
 		{
 			InventoryItemBase selectedInventoryItem2 = GetSelectedInventoryItem<InventoryItemBase>();
 			ICraftable craftable = selectedInventoryItem2 as ICraftable;
@@ -350,7 +349,7 @@ public class Inventory
 			}
 			if (item.Amount + amount > item.MaxAmount)
 			{
-				UI.Notify($"There's not enough room for anymore ~g~{item.Id}s~s~.", blinking: true);
+				Notifier.Show($"There's not enough room for anymore ~g~{item.Id}s~s~.", blinking: true);
 				return false;
 			}
 		}
@@ -389,7 +388,7 @@ public class Inventory
 					Prop[] nearbyProps = World.GetNearbyProps(PlayerPosition, 2.5f, "prop_beach_fire");
 					if (!nearbyProps.Any())
 					{
-						UI.Notify("There's no ~g~Camp Fire~s~ nearby.");
+						Notifier.Show("There's no ~g~Camp Fire~s~ nearby.");
 						return;
 					}
 				}
@@ -403,17 +402,17 @@ public class Inventory
 		this.TryCraft?.Invoke(item);
 	}
 
-	private void AddItemsToMenu(UIMenu menu, List<InventoryItemBase> items, ItemType type)
+	private void AddItemsToMenu(NativeMenu menu, List<InventoryItemBase> items, ItemType type)
 	{
 		items.ForEach(delegate(InventoryItemBase i)
 		{
 			i.CreateMenuItem();
-			menu.AddItem(i.MenuItem);
+			menu.Add(i.MenuItem);
 			i.MenuItem.Activated += delegate
 			{
 				if (i is WeaponInventoryItem { Amount: >0 } weaponInventoryItem && PlayerPed.Weapons.HasWeapon(weaponInventoryItem.Hash))
 				{
-					UI.Notify("You already have that weapon!");
+					Notifier.Show("You already have that weapon!");
 				}
 				else if (i.Amount > 0)
 				{
@@ -423,22 +422,17 @@ public class Inventory
 		});
 	}
 
-	private void UpdateMenuSpecific(UIMenu menu, List<InventoryItemBase> collection, bool leftBadges)
+	private void UpdateMenuSpecific(NativeMenu menu, List<InventoryItemBase> collection, bool leftBadges)
 	{
-		menu.MenuItems.ForEach(delegate(UIMenuItem menuItem)
+		menu.Items.ForEach(delegate(NativeItem menuItem)
 		{
 			InventoryItemBase itemFromMenuItem = GetItemFromMenuItem<InventoryItemBase>(collection, menuItem);
 			if (itemFromMenuItem != null)
 			{
-				if ((CanCraftItem(itemFromMenuItem as ICraftable) || DeveloperMode) && leftBadges)
-				{
-					menuItem.SetLeftBadge(UIMenuItem.BadgeStyle.Tick);
-				}
-				else if (leftBadges)
-				{
-					menuItem.SetLeftBadge(UIMenuItem.BadgeStyle.Lock);
-				}
-				menuItem.SetRightLabel($"{itemFromMenuItem.Amount}/{itemFromMenuItem.MaxAmount}");
+				// Right-aligned amount (LemonUI uses AltTitle for the right label).
+				// Craftable-state indicator: a checkmark prefix when craftable.
+				string craftMark = (leftBadges && (DeveloperMode || CanCraftItem(itemFromMenuItem as ICraftable))) ? "~g~✓~s~ " : string.Empty;
+				menuItem.AltTitle = $"{craftMark}{itemFromMenuItem.Amount}/{itemFromMenuItem.MaxAmount}";
 			}
 		});
 	}
@@ -463,11 +457,15 @@ public class Inventory
 
 	private T GetSelectedInventoryItem<T>() where T : class
 	{
-		UIMenuItem menuItem = InventoryMenu.MenuItems[InventoryMenu.CurrentSelection];
+		if (InventoryMenu.Items.Count == 0 || InventoryMenu.SelectedIndex < 0)
+		{
+			return null;
+		}
+		NativeItem menuItem = InventoryMenu.Items[InventoryMenu.SelectedIndex];
 		return GetItemFromMenuItem<T>(Items, menuItem);
 	}
 
-	private static T GetItemFromMenuItem<T>(List<InventoryItemBase> collection, UIMenuItem menuItem) where T : class
+	private static T GetItemFromMenuItem<T>(List<InventoryItemBase> collection, NativeItem menuItem) where T : class
 	{
 		return collection.Find((InventoryItemBase i) => i.MenuItem == menuItem) as T;
 	}
