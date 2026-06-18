@@ -44,7 +44,10 @@ public static class GameConfig
 	public static bool AiEnabled = false;
 	public static string GeminiApiKey = "";
 	public static string GeminiModel = "gemini-2.5-flash";
-	public static bool AiTtsEnabled = true;            // NPCs speak via Windows SAPI
+	public static bool AiTtsEnabled = true;            // NPCs speak out loud
+	public static string AiTtsProvider = "gemini";     // "gemini" (neural) or "sapi" (Windows)
+	public static string GeminiTtsModel = "gemini-2.5-flash-preview-tts";
+	public static string GeminiTtsVoice = "Kore";      // default voice when a companion has none
 	public static bool AiVoiceInputEnabled = false;    // push-to-talk SAPI dictation (opt-in)
 	public static float AiBarkIntervalSeconds = 45f;   // how often idle companions self-narrate
 
@@ -122,12 +125,18 @@ public static class GameConfig
 			GeminiApiKey = s.GetValue("ai", "gemini_api_key", GeminiApiKey);
 			GeminiModel = s.GetValue("ai", "gemini_model", GeminiModel);
 			AiTtsEnabled = s.GetValue("ai", "tts_enabled", AiTtsEnabled);
+			AiTtsProvider = s.GetValue("ai", "tts_provider", AiTtsProvider);
+			GeminiTtsModel = s.GetValue("ai", "gemini_tts_model", GeminiTtsModel);
+			GeminiTtsVoice = s.GetValue("ai", "gemini_tts_voice", GeminiTtsVoice);
 			AiVoiceInputEnabled = s.GetValue("ai", "voice_input_enabled", AiVoiceInputEnabled);
 			AiBarkIntervalSeconds = s.GetValue("ai", "bark_interval_seconds", AiBarkIntervalSeconds);
 			s.SetValue("ai", "enabled", AiEnabled);
 			s.SetValue("ai", "gemini_api_key", GeminiApiKey);
 			s.SetValue("ai", "gemini_model", GeminiModel);
 			s.SetValue("ai", "tts_enabled", AiTtsEnabled);
+			s.SetValue("ai", "tts_provider", AiTtsProvider);
+			s.SetValue("ai", "gemini_tts_model", GeminiTtsModel);
+			s.SetValue("ai", "gemini_tts_voice", GeminiTtsVoice);
 			s.SetValue("ai", "voice_input_enabled", AiVoiceInputEnabled);
 			s.SetValue("ai", "bark_interval_seconds", AiBarkIntervalSeconds);
 

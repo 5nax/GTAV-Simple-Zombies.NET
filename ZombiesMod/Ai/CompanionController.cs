@@ -20,6 +20,7 @@ public class AiCompanion
 	public Ped Ped;
 	public string Name;
 	public string Persona;
+	public string Voice = "Kore";
 	public string CurrentOrder = "sticking with the leader";
 	public int NextBarkTime;
 	public bool Thinking;
@@ -43,6 +44,12 @@ public class CompanionController : Script
 	private static readonly string[] Names =
 	{
 		"Mara", "Cole", "Tess", "Ramos", "Jess", "Vince", "Lena", "Dwight", "Quinn", "Sara", "Hadley", "Boon"
+	};
+
+	// Distinct Gemini prebuilt voices so companions don't all sound the same.
+	private static readonly string[] Voices =
+	{
+		"Kore", "Puck", "Charon", "Fenrir", "Aoede", "Leda", "Orus", "Zephyr"
 	};
 
 	private static readonly string[] Personas =
@@ -222,6 +229,7 @@ public class CompanionController : Script
 		string name = Names[Database.Random.Next(Names.Length)];
 		string persona = Personas[Database.Random.Next(Personas.Length)];
 		AiCompanion comp = new AiCompanion(near, name, persona);
+		comp.Voice = Voices[Database.Random.Next(Voices.Length)];
 		comp.NextBarkTime = Game.GameTime + (int)(GameConfig.AiBarkIntervalSeconds * 1000f);
 		near.Recruit(player);
 		near.IsPersistent = true;
@@ -264,7 +272,7 @@ public class CompanionController : Script
 		if (!string.IsNullOrWhiteSpace(r.Decision.Say))
 		{
 			GTA.UI.Screen.ShowSubtitle($"~y~{c.Name}:~s~ {r.Decision.Say}", 6000);
-			AiSpeech.Speak(r.Decision.Say);
+			AiTts.Speak(r.Decision.Say, c.Voice);
 		}
 		ExecuteAction(c, r.Decision.Action);
 	}
