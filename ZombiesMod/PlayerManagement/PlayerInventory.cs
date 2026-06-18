@@ -273,6 +273,12 @@ public class PlayerInventory : Script
 					PlayerInfection.Instance?.Cure(amount);
 					break;
 				}
+				case ItemEvent.Refuel:
+				{
+					float fuel = (float)((usableItemEvent.EventArgument as int?) ?? 50);
+					VehicleFuel.Instance?.Refuel(fuel);
+					break;
+				}
 				}
 			}
 		}
