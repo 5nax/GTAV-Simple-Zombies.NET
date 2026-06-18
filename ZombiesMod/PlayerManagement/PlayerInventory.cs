@@ -226,9 +226,17 @@ public class PlayerInventory : Script
 			BuildableInventoryItem buildableInventoryItem = (BuildableInventoryItem)item;
 			ItemPreview itemPreview = new ItemPreview();
 			itemPreview.StartPreview(buildableInventoryItem.PropName, buildableInventoryItem.GroundOffset, buildableInventoryItem.IsDoor);
-			while (!itemPreview.PreviewComplete)
+			// Interactive placement, but with a generous failsafe so an unexpected
+			// exception in the preview can't stall this script's fiber forever.
+			int safety = 0;
+			while (!itemPreview.PreviewComplete && safety++ < 18000)
 			{
 				Script.Yield();
+			}
+			if (!itemPreview.PreviewComplete)
+			{
+				itemPreview.Abort();
+				return;
 			}
 			Prop result = itemPreview.GetResult();
 			if (result == null)

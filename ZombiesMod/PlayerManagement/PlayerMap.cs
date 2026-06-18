@@ -98,7 +98,8 @@ public class PlayerMap : Script
 
 	private void OnAborted(object sender, EventArgs eventArgs)
 	{
-		_map.Clear();
+		// Null when the player never pressed Load and never placed a buildable.
+		_map?.Clear();
 	}
 
 	private void OnTick(object sender, EventArgs eventArgs)

@@ -238,7 +238,7 @@ public class MerryweatherSurvivors : Survivors
 
 	public override void CleanUp()
 	{
-		_particle.Delete();
+		_particle?.Delete();
 		_peds?.ForEach(delegate(Ped ped)
 		{
 			ped.AttachedBlip?.Delete();

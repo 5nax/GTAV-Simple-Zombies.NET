@@ -50,22 +50,34 @@ public class ScriptEventHandler : Script
 
 	private void UpdateScripts(object sender, EventArgs eventArgs)
 	{
-		for (int num = _scriptEventHandlers.Count - 1; num >= 0; num--)
+		// Snapshot so a handler that registers/unregisters another mid-invoke
+		// cannot corrupt the iteration.
+		EventHandler[] handlers = _scriptEventHandlers.ToArray();
+		for (int num = handlers.Length - 1; num >= 0; num--)
 		{
-			_scriptEventHandlers[num]?.Invoke(sender, eventArgs);
+			handlers[num]?.Invoke(sender, eventArgs);
 		}
 	}
 
 	private void UpdateWrappers(object sender, EventArgs eventArgs)
 	{
-		for (int i = _index; i < _index + 5 && i < _wrapperEventHandlers.Count; i++)
+		// Snapshot the list for a stable window; the original indexed the live list,
+		// so register/unregister during a cycle could skip or replay handlers.
+		EventHandler[] handlers = _wrapperEventHandlers.ToArray();
+		if (handlers.Length == 0)
 		{
-			_wrapperEventHandlers[i]?.Invoke(sender, eventArgs);
+			_index = 0;
+			return;
 		}
-		_index += 5;
-		if (_index >= _wrapperEventHandlers.Count)
+		if (_index >= handlers.Length)
 		{
 			_index = 0;
 		}
+		int end = System.Math.Min(_index + 5, handlers.Length);
+		for (int i = _index; i < end; i++)
+		{
+			handlers[i]?.Invoke(sender, eventArgs);
+		}
+		_index = (end >= handlers.Length) ? 0 : end;
 	}
 }

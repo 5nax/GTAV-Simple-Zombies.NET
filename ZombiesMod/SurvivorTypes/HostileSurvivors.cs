@@ -81,9 +81,15 @@ public class HostileSurvivors : Survivors
 
 	private void VehicleWrapperOnUpdated(EntityEventWrapper sender, Entity entity)
 	{
-		if (!(entity == null))
+		// Guard the blip and the (possibly-cleared) vehicle/driver before dereferencing.
+		if (entity == null || _vehicle == null)
 		{
-			entity.AttachedBlip.Alpha = (_vehicle.Driver.Exists() ? 255 : 0);
+			return;
+		}
+		Blip blip = entity.AttachedBlip;
+		if (blip != null && blip.Exists())
+		{
+			blip.Alpha = (_vehicle.Driver != null && _vehicle.Driver.Exists()) ? 255 : 0;
 		}
 	}
 
