@@ -48,6 +48,11 @@ public abstract class ZombiePed : IEquatable<Ped>
 
 	private DateTime _currentMovementUpdateTime;
 
+	// Where the target was last seen, and how long to keep investigating it.
+	private Vector3 _lastKnownTargetPos;
+
+	private int _searchUntil;
+
 	public virtual bool PlayAudio { get; set; }
 
 	public Ped Target
@@ -60,7 +65,10 @@ public abstract class ZombiePed : IEquatable<Ped>
 		{
 			if (value == null && _target != null)
 			{
-				_ped.Task.WanderAround(Position, WanderRadius);
+				// Don't forget instantly — go investigate where the target was last seen.
+				_lastKnownTargetPos = _target.Position;
+				_searchUntil = Game.GameTime + 7000;
+				_ped.Task.GoTo(_lastKnownTargetPos);
 				bool goingToTarget = (AttackingTarget = false);
 				GoingToTarget = goingToTarget;
 			}
@@ -191,6 +199,12 @@ public abstract class ZombiePed : IEquatable<Ped>
 				AttackingTarget = true;
 				GoingToTarget = false;
 			}
+		}
+		else if (_searchUntil != 0 && Game.GameTime >= _searchUntil)
+		{
+			// Search window elapsed without re-spotting anyone — drift back to wandering.
+			_searchUntil = 0;
+			_ped.Task.WanderAround(Position, WanderRadius);
 		}
 	}
 
