@@ -437,6 +437,20 @@ public class Inventory
 		return true;
 	}
 
+	// Public crafting surface used by the dedicated crafting menu.
+	public bool CanCraft(ICraftable craftable)
+	{
+		return CanCraftItem(craftable);
+	}
+
+	public void CraftItem(InventoryItemBase item)
+	{
+		if (item is ICraftable craftable)
+		{
+			Craft(item, craftable);
+		}
+	}
+
 	private void Craft(InventoryItemBase item, ICraftable craftable)
 	{
 		if (MenuType != MenuType.Player || item == null || craftable == null || (!DeveloperMode && (!CanCraftItem(craftable) || item.Amount >= item.MaxAmount)))

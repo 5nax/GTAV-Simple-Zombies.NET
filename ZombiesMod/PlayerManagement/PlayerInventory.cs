@@ -36,6 +36,9 @@ public class PlayerInventory : Script
 
 	public static PlayerInventory Instance { get; private set; }
 
+	// Exposed so the dedicated crafting menu can read recipes and craft.
+	public Inventory CurrentInventory => _inventory;
+
 	private static Ped PlayerPed => Database.PlayerPed;
 
 	private static Vector3 PlayerPosition => Database.PlayerPosition;
