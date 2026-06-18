@@ -16,17 +16,17 @@ public class ZombieVehicleSpawner : Script, ISpawner
 
 	private readonly int _maxVehicles = 10;
 
-	private readonly int _maxZombies = 30;
+	private readonly int _maxZombies = GameConfig.MaxZombies;
 
 	private readonly int _minVehicles = 1;
 
-	private readonly int _minZombies = 7;
+	private readonly int _minZombies = GameConfig.MinZombies;
 
-	private readonly int _spawnDistance = 75;
+	private readonly int _spawnDistance = GameConfig.SpawnDistance;
 
-	private readonly int _minSpawnDistance = 50;
+	private readonly int _minSpawnDistance = GameConfig.MinSpawnDistance;
 
-	private readonly int _zombieHealth = 750;
+	private readonly int _zombieHealth = GameConfig.ZombieHealth;
 
 	private bool _nightFall;
 

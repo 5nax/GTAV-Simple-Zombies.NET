@@ -13,6 +13,32 @@ public static class GameConfig
 	public static float BloaterChance = 0.03f;
 	public static float SpitterChance = 0.03f;
 	public static float ScreamerChance = 0.02f;
+	public static float BlindStalkerChance = 0.10f;       // sound-only "clicker"-style zombie
+
+	// --- Zombie density & behavior (realism: fewer, slower, deadlier) ---
+	public static int MaxZombies = 14;                    // ambient cap near the player (was 30)
+	public static int MinZombies = 4;
+	public static int ZombieHealth = 350;
+	public static int SpawnDistance = 90;                 // spawn further out, off-screen
+	public static int MinSpawnDistance = 55;
+	public static float RunnerChanceDay = 0.02f;          // most are shamblers by day
+	public static float RunnerChanceNight = 0.18f;        // a few sprinters at night
+	public static float SensingRange = 90f;               // how far a zombie can notice you at all
+	public static float VisionDistance = 28f;             // line-of-sight detection range
+
+	// --- Stealth & noise (gunfire/sprint draw the dead; crouch & suppressors hide you) ---
+	public static bool StealthEnabled = true;
+	public static float GunshotNoiseRadius = 90f;         // unsuppressed shots aggro within this
+	public static float SuppressedNoiseRadius = 22f;
+	public static float SprintNoiseRadius = 28f;
+
+	// --- Injury / bleeding (higher stakes) ---
+	public static bool BleedingEnabled = true;
+	public static int BleedChancePercent = 45;            // chance a zombie hit opens a wound
+	public static float BleedDamagePerSecond = 1.6f;
+
+	// --- Hunting ---
+	public static bool HuntingEnabled = true;
 
 	// --- Player infection ---
 	public static bool InfectionEnabled = true;
@@ -21,12 +47,12 @@ public static class GameConfig
 	public static float InfectionGrowthPerSec = 0.6f;    // passive growth once infected
 	public static float InfectionDamageAtFull = 4f;      // health lost per damage tick at 100%
 
-	// --- Horde / dynamic world ---
-	public static bool HordesEnabled = true;
-	public static int HordeIntervalSeconds = 540;        // ~9 min between ambient hordes
-	public static int HordeSize = 8;
+	// --- Horde / dynamic world (off by default — this is survival, not L4D) ---
+	public static bool HordesEnabled = false;
+	public static int HordeIntervalSeconds = 900;
+	public static int HordeSize = 5;
 	public static bool BloodMoonEnabled = true;
-	public static int BloodMoonChancePercent = 20;       // chance each night becomes a blood moon
+	public static int BloodMoonChancePercent = 8;        // rare, ominous
 
 	// --- Progression ---
 	public static bool ProgressionEnabled = true;
@@ -61,6 +87,28 @@ public static class GameConfig
 			BloaterChance = s.GetValue("variants", "bloater_chance", BloaterChance);
 			SpitterChance = s.GetValue("variants", "spitter_chance", SpitterChance);
 			ScreamerChance = s.GetValue("variants", "screamer_chance", ScreamerChance);
+			BlindStalkerChance = s.GetValue("variants", "blind_stalker_chance", BlindStalkerChance);
+
+			MaxZombies = s.GetValue("zombies", "max_nearby", MaxZombies);
+			MinZombies = s.GetValue("zombies", "min_nearby", MinZombies);
+			ZombieHealth = s.GetValue("zombies", "health", ZombieHealth);
+			SpawnDistance = s.GetValue("zombies", "spawn_distance", SpawnDistance);
+			MinSpawnDistance = s.GetValue("zombies", "min_spawn_distance", MinSpawnDistance);
+			RunnerChanceDay = s.GetValue("zombies", "runner_chance_day", RunnerChanceDay);
+			RunnerChanceNight = s.GetValue("zombies", "runner_chance_night", RunnerChanceNight);
+			SensingRange = s.GetValue("zombies", "sensing_range", SensingRange);
+			VisionDistance = s.GetValue("zombies", "vision_distance", VisionDistance);
+
+			StealthEnabled = s.GetValue("stealth", "enabled", StealthEnabled);
+			GunshotNoiseRadius = s.GetValue("stealth", "gunshot_noise_radius", GunshotNoiseRadius);
+			SuppressedNoiseRadius = s.GetValue("stealth", "suppressed_noise_radius", SuppressedNoiseRadius);
+			SprintNoiseRadius = s.GetValue("stealth", "sprint_noise_radius", SprintNoiseRadius);
+
+			BleedingEnabled = s.GetValue("bleeding", "enabled", BleedingEnabled);
+			BleedChancePercent = s.GetValue("bleeding", "chance_percent", BleedChancePercent);
+			BleedDamagePerSecond = s.GetValue("bleeding", "damage_per_second", BleedDamagePerSecond);
+
+			HuntingEnabled = s.GetValue("hunting", "enabled", HuntingEnabled);
 
 			InfectionEnabled = s.GetValue("infection", "enabled", InfectionEnabled);
 			InfectionBiteChancePercent = s.GetValue("infection", "bite_chance_percent", InfectionBiteChancePercent);

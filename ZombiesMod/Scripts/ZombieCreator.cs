@@ -73,15 +73,12 @@ public static class ZombieCreator
 			return new Screamer(ped.Handle);
 		}
 
-		float num = 0.055f;
-		if (IsNightFall())
-		{
-			num = 0.5f;
-		}
+		// Most of the dead are slow shamblers; only a few sprint, more so at night.
+		float num = GameConfig.RunnerChanceDay;
 		TimeSpan currentDayTime = World.CurrentTimeOfDay;
 		if (currentDayTime.Hours >= 20 || currentDayTime.Hours <= 3)
 		{
-			num = 0.4f;
+			num = GameConfig.RunnerChanceNight;
 		}
 		if ((Database.Random.NextDouble() < (double)num || overrideAsFastZombie) && Runners)
 		{

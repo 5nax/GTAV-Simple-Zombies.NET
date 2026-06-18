@@ -44,6 +44,9 @@ public class ModController : Script
 		Settings.SetValue("keys", "zombies_menu_key", _menuKey);
 		Settings.SetValue("zombies", "zombie_damage", ZombiePed.ZombieDamage);
 		Settings.Save();
+		// Apply realism sensing/vision tuning to the zombie AI.
+		ZombiePed.SensingRange = GameConfig.SensingRange;
+		ZombiePed.VisionDistance = GameConfig.VisionDistance;
 	}
 
 	private void ConfigureMenu()
