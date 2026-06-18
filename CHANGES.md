@@ -3,6 +3,17 @@
 Chronological summary of the modernization. Each bullet maps to a commit on the
 `enhanced-port` branch.
 
+## 3.2 — Neural companion voices
+
+Companions now speak with **Gemini neural TTS** instead of the robotic Windows SAPI
+voice. `GeminiTts` synthesizes each line to PCM and wraps it as WAV; `AiTts` plays it on
+a dedicated background thread (one line at a time, never blocking the game) and falls
+back to SAPI automatically on any failure (or set `tts_provider = sapi`). Each companion
+is auto-assigned a distinct prebuilt voice. New `[ai]` keys: `tts_provider`,
+`gemini_tts_model`, `gemini_tts_voice`.
+
+---
+
 ## 3.1 — AI survivor companions (Google Gemini) + smarter dead
 
 Opt-in, off until you paste a Gemini API key into `[ai]` in the INI. Dormant otherwise.

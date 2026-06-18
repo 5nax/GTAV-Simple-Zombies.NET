@@ -78,7 +78,10 @@ Talk to survivors and have them think, speak, and act for themselves. **Off by d
    enabled = True
    gemini_api_key = YOUR_KEY_HERE
    gemini_model = gemini-2.5-flash
-   tts_enabled = True            ; companions speak via Windows TTS
+   tts_enabled = True            ; companions speak out loud
+   tts_provider = gemini         ; "gemini" = neural voices (best); "sapi" = offline Windows TTS
+   gemini_tts_model = gemini-2.5-flash-preview-tts
+   gemini_tts_voice = Kore       ; default voice (companions are auto-assigned distinct voices)
    voice_input_enabled = False   ; set True for push-to-talk voice commands (needs a mic)
    ```
 3. In-game, walk up to any survivor and press **B** to type to them (or **V** to speak,
@@ -89,8 +92,10 @@ weather, their health, their current order), hold a persona, follow / hold / att
 hunt / flee / wander on command, **fend for themselves**, and chime in unprompted.
 
 **Notes**
-- TTS and voice input use **Windows speech (SAPI)** — Windows only; if unavailable the
-  mod simply runs without them.
+- Companions speak with **Gemini neural TTS** by default (natural, per-companion voices),
+  played through your audio device; it falls back to **Windows SAPI** automatically if
+  synthesis fails (or set `tts_provider = sapi`). Voice *input* uses Windows SAPI (Windows
+  only) — if unavailable the mod simply runs without it.
 - Each conversation/bark is a Gemini API call (you pay per your Google quota); the
   bark interval is configurable. Zombies do **not** use the API — they use a built-in
   smarter rule-based brain.
