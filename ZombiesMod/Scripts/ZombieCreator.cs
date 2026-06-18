@@ -26,6 +26,8 @@ public static class ZombieCreator
 		ped.DiesOnLowHealth = false;
 		ped.SetAlertness(Alertness.Nuetral);
 		ped.SetCombatAttributes(CombatAttributes.AlwaysFight, enabled: true);
+		// Headshots register as critical hits (lethal) when enabled, rewarding aim.
+		ped.CanSufferCriticalHits = GameConfig.HeadshotBonusEnabled;
 		Function.Call((Hash)0x70A2D1137C8ED7C9uL, new InputArgument[3] { ped.Handle, 0, 0 });
 		ped.SetConfigFlag(281, value: true);
 		ped.Task.WanderAround(ped.Position, ZombiePed.WanderRadius);

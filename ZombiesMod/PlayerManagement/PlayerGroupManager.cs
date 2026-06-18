@@ -90,6 +90,33 @@ public class PlayerGroupManager : Script
 		Aborted += OnAborted;
 	}
 
+	// Revive a fallen human ally (any nearby dead non-zombie human) and re-recruit it.
+	private void TryReviveDownedAlly()
+	{
+		if (PlayerPed.IsInVehicle())
+		{
+			return;
+		}
+		Ped[] near = World.GetNearbyPeds(PlayerPed, 2.5f);
+		Ped downed = near.FirstOrDefault((Ped p) =>
+			p != null && p.Exists() && p.IsDead && !p.IsPlayer && p.IsHuman
+			&& p.RelationshipGroup != Relationships.InfectedRelationship);
+		if (downed == null)
+		{
+			return;
+		}
+		Game.DisableControlThisFrame(Control.Context);
+		UiExtended.DisplayHelpTextThisFrame("Press ~INPUT_CONTEXT~ to revive this survivor.");
+		if (Ctrl.DisabledJustPressed(Control.Context))
+		{
+			downed.Resurrect();
+			downed.MaxHealth = 200;
+			downed.Health = 200;
+			downed.Recruit(PlayerPed);
+			Notifier.Show("~g~Survivor revived~s~ and recruited.");
+		}
+	}
+
 	private void SetTask(Ped ped, PedTask task)
 	{
 		if (task == (PedTask)(-1) || ped.IsPlayer)
@@ -163,7 +190,12 @@ public class PlayerGroupManager : Script
 
 	private void OnTick(object sender, EventArgs eventArgs)
 	{
-		if (PlayerPed.IsInVehicle() || MenuConrtoller.MenuPool.AreAnyVisible || PlayerPed.PedGroup.MemberCount <= 0)
+		if (MenuConrtoller.MenuPool.AreAnyVisible)
+		{
+			return;
+		}
+		TryReviveDownedAlly();
+		if (PlayerPed.IsInVehicle() || PlayerPed.PedGroup.MemberCount <= 0)
 		{
 			return;
 		}
