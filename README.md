@@ -35,6 +35,26 @@ Legacy**, via [ScriptHookVDotNetEnhanced](https://github.com/Chiheb-Bacha/Script
 
 ---
 
+## Gameplay features (2.0 expansion)
+
+On top of the original looting/crafting/base-building/survival loop:
+
+- **7 zombie types** — Walkers & Runners plus **Brute** (tanky, knockdown), **Crawler**
+  (fast/fragile), **Bloater** (explodes on death), **Spitter** (ranged), and **Screamer**
+  (summons reinforcements).
+- **Dynamic threats** — periodic **hordes** that converge on you, random **blood-moon
+  nights** (everything sprints, doubled spawns), and screamer reinforcement waves.
+- **Player infection** — bites can infect you; the meter climbs and turns you at 100%.
+  Craft an **Antidote** to cure it.
+- **Progression** — kill counter, **days survived**, **XP/levels** with **max-health
+  perks**, and a HUD; saved across sessions.
+- **Vehicle fuel** — fuel drains as you drive (HUD + dashboard gauge); refuel at gas
+  pumps or with a craftable **Fuel Can**; the engine dies when empty.
+- **Headshots** are lethal critical hits; **downed survivors can be revived** and
+  recruited; distant corpses are cleaned up for performance.
+- **Everything is tunable** in `scripts/ZombiesMod.ini` (`[variants] [infection]
+  [hordes] [progression] [fuel] [combat]`) and the main systems toggle in the menu.
+
 ## Installation (players)
 
 1. **ScriptHookV** — install the build matching your game patch from
@@ -54,8 +74,9 @@ Legacy**, via [ScriptHookVDotNetEnhanced](https://github.com/Chiheb-Bacha/Script
    launcher). **Never load mods into GTA Online.**
 
 The mod creates its files under `<game>\scripts\` on first run: `ZombiesMod.ini`
-(keys + tuning) and `Inventory.dat` / `Map.dat` / `Vehicles.dat` / `Guards.dat`
-(saves). Errors are logged to `scripts\ZombiesModCrashLog.txt`.
+(keys + tuning for every system), `ZombiesProgress.ini` (kills/level/days), and
+`Inventory.dat` / `Map.dat` / `Vehicles.dat` / `Guards.dat` (saves). Errors are logged
+to `scripts\ZombiesModCrashLog.txt`.
 
 ### Default keys (editable in `ZombiesMod.ini`)
 - **F10** — open the Simple Zombies menu (`zombies_menu_key`)

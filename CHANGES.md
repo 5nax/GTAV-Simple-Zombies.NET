@@ -3,6 +3,48 @@
 Chronological summary of the modernization. Each bullet maps to a commit on the
 `enhanced-port` branch.
 
+## 2.0 — Content expansion (more variety & dynamism)
+
+New, INI-tunable systems (all gated in `[section]`s of `ZombiesMod.ini` and most
+toggleable in the in-game menu):
+
+**Zombie variety** — five new variants rolled per spawn alongside walkers/runners:
+- **Brute** — 3× health, slow, heavy hit that knocks you down.
+- **Crawler** — fast, fragile, crouched scuttle.
+- **Bloater** — bursts into a fiery explosion on death.
+- **Spitter** — attacks from range with corrosive spit.
+- **Screamer** — shrieks on contact and summons a reinforcement wave.
+
+**Dynamic threats** (`HordeController`)
+- Ambient **hordes** periodically converge on the player.
+- Random **blood-moon nights**: all zombies sprint, weather thickens, horde size/rate double.
+- Screamer **reinforcement waves**.
+
+**Player infection** (`PlayerInfection`) — zombie bites can infect you; the meter
+climbs over time (HUD bar), and at 100% you take "turning" damage. Cure with the new
+craftable **Antidote**.
+
+**Progression** (`PlayerProgression`) — kills counter, **days survived**, **XP &
+leveling** (specials worth more), **max-health perks** per level, and a HUD readout;
+saved to `scripts/ZombiesProgress.ini`.
+
+**Vehicle fuel** (`VehicleFuel`) — vehicles burn fuel (HUD bar + dashboard gauge),
+engine cuts out when empty; refuel at gas pumps or with the new craftable **Fuel Can**.
+
+**Combat & world** — headshots are lethal crits (`CanSufferCriticalHits`), distant
+zombie **corpses are cleaned up** above a cap (perf), and you can **revive a downed
+survivor** (INPUT_CONTEXT) to recruit them.
+
+**Config** — new `Static/GameConfig.cs` exposes every knob via `ZombiesMod.ini`
+(`[variants] [infection] [hordes] [progression] [fuel] [combat]`).
+
+Also fixed while here: infection-spread zombies are now registered with the spawner
+(no longer escape ClearAll), survivor/merryweather spawn-count off-by-ones, the
+unbounded Loot247 looted-shelf list, and a leaked Merryweather flavor vehicle. Removed
+dead code (LootPickupType, IUpdatable, an empty stub, a duplicate enum value).
+
+---
+
 ## Build / platform
 - Re‑decompiled `ZombiesMod.dll` with ILSpy 9 to recover complete, compilable
   source (the prior repo was incomplete decompiler output: missing menu handlers,
