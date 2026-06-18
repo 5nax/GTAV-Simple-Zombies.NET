@@ -329,7 +329,7 @@ public class CompanionController : Script
 	{
 		Vector3 spot = ped.Position + ped.ForwardVector * 1.6f;
 		ped.Task.PlayAnimation("amb@world_human_gardener_plant@male@base", "base", 8f, 2500, AnimationFlags.UpperBodyOnly);
-		Prop cover = World.CreateProp("prop_mb_sandblock_02", spot, ped.Heading, dynamic: false, placeOnGround: true);
+		Prop cover = World.CreateProp("prop_mb_sandblock_02", spot, new Vector3(0f, 0f, ped.Heading), dynamic: false, placeOnGround: true);
 		if (cover != null)
 		{
 			cover.IsPositionFrozen = true;
