@@ -26,6 +26,9 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Net.Http" />            <!-- Gemini REST calls -->
+    <Reference Include="System.Web.Extensions" />      <!-- JavaScriptSerializer (no NuGet) -->
+    <Reference Include="System.Speech" />              <!-- Windows SAPI TTS + speech recognition -->
   </ItemGroup>
 
   <!-- GTA modding stack: ScriptHookVDotNet v3 API shipped by ScriptHookVDotNetEnhanced,

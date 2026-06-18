@@ -40,6 +40,14 @@ public static class GameConfig
 	// --- Hunting ---
 	public static bool HuntingEnabled = true;
 
+	// --- AI companions (Google Gemini) — paste your key in the INI to enable ---
+	public static bool AiEnabled = false;
+	public static string GeminiApiKey = "";
+	public static string GeminiModel = "gemini-2.5-flash";
+	public static bool AiTtsEnabled = true;            // NPCs speak via Windows SAPI
+	public static bool AiVoiceInputEnabled = false;    // push-to-talk SAPI dictation (opt-in)
+	public static float AiBarkIntervalSeconds = 45f;   // how often idle companions self-narrate
+
 	// --- Player infection ---
 	public static bool InfectionEnabled = true;
 	public static int InfectionBiteChancePercent = 35;   // chance a zombie melee hit infects you
@@ -109,6 +117,19 @@ public static class GameConfig
 			BleedDamagePerSecond = s.GetValue("bleeding", "damage_per_second", BleedDamagePerSecond);
 
 			HuntingEnabled = s.GetValue("hunting", "enabled", HuntingEnabled);
+
+			AiEnabled = s.GetValue("ai", "enabled", AiEnabled);
+			GeminiApiKey = s.GetValue("ai", "gemini_api_key", GeminiApiKey);
+			GeminiModel = s.GetValue("ai", "gemini_model", GeminiModel);
+			AiTtsEnabled = s.GetValue("ai", "tts_enabled", AiTtsEnabled);
+			AiVoiceInputEnabled = s.GetValue("ai", "voice_input_enabled", AiVoiceInputEnabled);
+			AiBarkIntervalSeconds = s.GetValue("ai", "bark_interval_seconds", AiBarkIntervalSeconds);
+			s.SetValue("ai", "enabled", AiEnabled);
+			s.SetValue("ai", "gemini_api_key", GeminiApiKey);
+			s.SetValue("ai", "gemini_model", GeminiModel);
+			s.SetValue("ai", "tts_enabled", AiTtsEnabled);
+			s.SetValue("ai", "voice_input_enabled", AiVoiceInputEnabled);
+			s.SetValue("ai", "bark_interval_seconds", AiBarkIntervalSeconds);
 
 			InfectionEnabled = s.GetValue("infection", "enabled", InfectionEnabled);
 			InfectionBiteChancePercent = s.GetValue("infection", "bite_chance_percent", InfectionBiteChancePercent);
