@@ -90,6 +90,30 @@ public class ModController : Script
 			PlayerStats.UseStats = stats.Checked;
 		};
 
+		NativeCheckboxItem hordes = new NativeCheckboxItem("Hordes", "Periodic zombie hordes converge on you.", GameConfig.HordesEnabled);
+		hordes.CheckboxChanged += delegate
+		{
+			GameConfig.HordesEnabled = hordes.Checked;
+		};
+
+		NativeCheckboxItem bloodMoon = new NativeCheckboxItem("Blood Moons", "Random nights become a frenzied blood moon.", GameConfig.BloodMoonEnabled);
+		bloodMoon.CheckboxChanged += delegate
+		{
+			GameConfig.BloodMoonEnabled = bloodMoon.Checked;
+		};
+
+		NativeCheckboxItem playerInfection = new NativeCheckboxItem("Player Infection", "Zombie bites can infect you; craft an Antidote to cure.", GameConfig.InfectionEnabled);
+		playerInfection.CheckboxChanged += delegate
+		{
+			GameConfig.InfectionEnabled = playerInfection.Checked;
+		};
+
+		NativeCheckboxItem fuel = new NativeCheckboxItem("Vehicle Fuel", "Vehicles burn fuel; refuel at pumps or with a Fuel Can.", GameConfig.FuelEnabled);
+		fuel.CheckboxChanged += delegate
+		{
+			GameConfig.FuelEnabled = fuel.Checked;
+		};
+
 		NativeItem load = new NativeItem("Load", "Load the map, your vehicles and your bodyguards.");
 		load.Activated += delegate
 		{
@@ -128,6 +152,10 @@ public class ModController : Script
 		MainMenu.Add(electricity);
 		MainMenu.Add(survivors);
 		MainMenu.Add(stats);
+		MainMenu.Add(hordes);
+		MainMenu.Add(bloodMoon);
+		MainMenu.Add(playerInfection);
+		MainMenu.Add(fuel);
 		MainMenu.Add(load);
 		MainMenu.Add(saveVehicle);
 		MainMenu.Add(saveAllVehicles);
