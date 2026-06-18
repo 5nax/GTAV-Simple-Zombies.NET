@@ -74,7 +74,7 @@ public class ItemPreview
 			{
 				prop.IsCollisionEnabled = false;
 				_currentPreview = prop;
-				_currentPreview.Alpha = 150;
+				_currentPreview.Opacity = 150;
 				Database.PlayerPed.Weapons.Select(WeaponHash.Unarmed, equipNow: true);
 				_resultProp = null;
 			}
@@ -103,7 +103,7 @@ public class ItemPreview
 		}
 		Vector3 position = GameplayCamera.Position;
 		Vector3 direction = GameplayCamera.Direction;
-		Vector3 hitCoords = World.Raycast(position, position + direction * 15f, IntersectFlags.Everything, Database.PlayerPed).HitCoords;
+		Vector3 hitCoords = World.Raycast(position, position + direction * 15f, IntersectFlags.Everything, Database.PlayerPed).HitPosition;
 		if (hitCoords != Vector3.Zero && hitCoords.DistanceTo(Database.PlayerPosition) > 1.5f)
 		{
 			DrawScaleForms();

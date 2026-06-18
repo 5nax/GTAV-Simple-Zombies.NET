@@ -4,19 +4,15 @@ namespace ZombiesMod.Static;
 
 public class Relationships
 {
-	public static int InfectedRelationship;
+	public static RelationshipGroup InfectedRelationship;
 
-	public static int FriendlyRelationship;
+	public static RelationshipGroup FriendlyRelationship;
 
-	public static int MilitiaRelationship;
+	public static RelationshipGroup MilitiaRelationship;
 
-	public static int HostileRelationship;
+	public static RelationshipGroup HostileRelationship;
 
-	public static int PlayerRelationship;
-
-	static Relationships()
-	{
-	}
+	public static RelationshipGroup PlayerRelationship;
 
 	public static void SetRelationships()
 	{
@@ -38,9 +34,8 @@ public class Relationships
 		Database.PlayerPed.IsPriorityTargetForEnemies = true;
 	}
 
-	public static void SetRelationshipBothWays(Relationship rel, int group1, int group2)
+	public static void SetRelationshipBothWays(Relationship rel, RelationshipGroup group1, RelationshipGroup group2)
 	{
-		World.SetRelationshipBetweenGroups(rel, group1, group2);
-		World.SetRelationshipBetweenGroups(rel, group2, group1);
+		group1.SetRelationshipBetweenGroups(group2, rel, bidirectionally: true);
 	}
 }

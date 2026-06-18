@@ -245,7 +245,7 @@ public class MerryweatherSurvivors : Survivors
 			ped.AlwaysKeepTask = true;
 			ped.IsPersistent = false;
 		});
-		_blip?.Remove();
+		_blip?.Delete();
 		if (MenuConrtoller.BarPool.Contains(_timerBar))
 		{
 			MenuConrtoller.BarPool.Remove(_timerBar);
@@ -261,7 +261,7 @@ public class MerryweatherSurvivors : Survivors
 			ped.AttachedBlip?.Delete();
 			ped.Delete();
 		});
-		_blip?.Remove();
+		_blip?.Delete();
 		if (MenuConrtoller.BarPool.Contains(_timerBar))
 		{
 			MenuConrtoller.BarPool.Remove(_timerBar);

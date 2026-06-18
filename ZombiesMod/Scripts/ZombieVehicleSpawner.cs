@@ -176,26 +176,32 @@ public class ZombieVehicleSpawner : Script, ISpawner
 
 	private static void OpenRandomDoor(Vehicle veh)
 	{
-		VehicleDoor[] doors = veh.GetDoors();
-		VehicleDoor door = doors[Database.Random.Next(doors.Length)];
-		veh.OpenDoor(door, loose: false, instantly: true);
+		VehicleDoorIndex[] present = ((VehicleDoorIndex[])Enum.GetValues(typeof(VehicleDoorIndex)))
+			.Where((VehicleDoorIndex d) => veh.Doors.Contains(d)).ToArray();
+		if (present.Length == 0)
+		{
+			return;
+		}
+		VehicleDoorIndex door = present[Database.Random.Next(present.Length)];
+		veh.Doors[door].Open(loose: false, instantly: true);
 	}
 
 	private static void SmashRandomWindow(Vehicle veh)
 	{
-		VehicleWindow[] source = (VehicleWindow[])Enum.GetValues(typeof(VehicleWindow));
-		source = source.Where((VehicleWindow v) => Function.Call<bool>((Hash)0x46E571A0E20D01F1uL, new InputArgument[2]
+		VehicleWindowIndex[] intact = ((VehicleWindowIndex[])Enum.GetValues(typeof(VehicleWindowIndex)))
+			.Where((VehicleWindowIndex w) => Function.Call<bool>((Hash)0x46E571A0E20D01F1uL, veh.Handle, (int)w)).ToArray();
+		if (intact.Length == 0)
 		{
-			veh.Handle,
-			(int)v
-		})).ToArray();
-		VehicleWindow window = source[Database.Random.Next(source.Length)];
-		veh.SmashWindow(window);
+			return;
+		}
+		VehicleWindowIndex window = intact[Database.Random.Next(intact.Length)];
+		veh.Windows[window].Smash();
 	}
 
 	public bool IsInvalidZone(Vector3 spawn)
 	{
-		return Array.Find(InvalidZoneNames, (string z) => z == World.GetZoneName(spawn)) != null;
+		string zone = Function.Call<string>((Hash)0x7EE64D51E8498728uL, spawn.X, spawn.Y, spawn.Z);
+		return Array.Find(InvalidZoneNames, (string z) => z == zone) != null;
 	}
 
 	private static bool Exists(Entity arg)

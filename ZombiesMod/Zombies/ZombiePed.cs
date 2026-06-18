@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using GTA;
+using GTA.Math;
 using ZombiesMod.Extensions;
 using ZombiesMod.Scripts;
 using ZombiesMod.Static;
@@ -8,7 +9,10 @@ using ZombiesMod.Wrappers;
 
 namespace ZombiesMod.Zombies;
 
-public abstract class ZombiePed : Entity, IEquatable<Ped>
+// Composition over inheritance: SHVDN v3 makes GTA entity constructors internal, so a
+// mod assembly can no longer subclass Entity/Ped. ZombiePed now wraps a Ped and delegates
+// the entity surface it needs; the implicit ZombiePed->Ped operator keeps call sites terse.
+public abstract class ZombiePed : IEquatable<Ped>
 {
 	public delegate void OnGoingToTargetEvent(Ped target);
 
@@ -88,7 +92,7 @@ public abstract class ZombiePed : Entity, IEquatable<Ped>
 		}
 		set
 		{
-			if (value && !_ped.IsRagdoll && !base.IsDead && !_ped.IsClimbing && !_ped.IsFalling && !_ped.IsBeingStunned && !_ped.IsGettingUp)
+			if (value && !_ped.IsRagdoll && !_ped.IsDead && !_ped.IsClimbing && !_ped.IsFalling && !_ped.IsBeingStunned && !_ped.IsGettingUp)
 			{
 				this.AttackTarget?.Invoke(Target);
 			}
@@ -102,10 +106,18 @@ public abstract class ZombiePed : Entity, IEquatable<Ped>
 
 	public event OnAttackingTargetEvent AttackTarget;
 
+	// Delegated entity surface (was inherited from Entity in v2).
+	public Vector3 Position => _ped.Position;
+
+	public int MaxHealth => _ped.MaxHealth;
+
+	public bool Exists() => _ped != null && _ped.Exists();
+
+	public void Delete() => _ped?.Delete();
+
 	protected ZombiePed(int handle)
-		: base(handle)
 	{
-		_ped = new Ped(handle);
+		_ped = (Ped)Entity.FromHandle(handle);
 		_eventWrapper = new EntityEventWrapper(_ped);
 		_eventWrapper.Died += OnDied;
 		_eventWrapper.Updated += Update;
@@ -121,7 +133,7 @@ public abstract class ZombiePed : Entity, IEquatable<Ped>
 
 	private void OnDied(EntityEventWrapper sender, Entity entity)
 	{
-		base.AttachedBlip?.Delete();
+		_ped.AttachedBlip?.Delete();
 		if (ZombieVehicleSpawner.Instance.IsInvalidZone(entity.Position) && ZombieVehicleSpawner.Instance.IsValidSpawn(entity.Position))
 		{
 			ZombieVehicleSpawner.Instance.SpawnBlocker.Add(entity.Position);
@@ -130,7 +142,7 @@ public abstract class ZombiePed : Entity, IEquatable<Ped>
 
 	public void Update(EntityEventWrapper entityEventWrapper, Entity entity)
 	{
-		if (Position.VDist(Database.PlayerPosition) > 120f && (!base.IsOnScreen || base.IsDead))
+		if (Position.VDist(Database.PlayerPosition) > 120f && (!_ped.IsOnScreen || _ped.IsDead))
 		{
 			Delete();
 		}
@@ -250,7 +262,7 @@ public abstract class ZombiePed : Entity, IEquatable<Ped>
 
 	protected bool Equals(ZombiePed other)
 	{
-		return Equals((Entity)other) && object.Equals(_ped, other._ped);
+		return object.Equals(_ped, other._ped);
 	}
 
 	public override bool Equals(object obj)

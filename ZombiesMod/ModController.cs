@@ -75,7 +75,7 @@ public class ModController : Script
 		NativeCheckboxItem electricity = new NativeCheckboxItem("Electricity", "Enables/Disable blackout mode.", true);
 		electricity.CheckboxChanged += delegate
 		{
-			World.SetBlackout(!electricity.Checked);
+			World.Blackout = !electricity.Checked;
 		};
 
 		NativeCheckboxItem survivors = new NativeCheckboxItem("Survivors", "Enable/Disable survivors.", false);
@@ -103,7 +103,7 @@ public class ModController : Script
 		{
 			if (Database.PlayerCurrentVehicle == null || !Database.PlayerCurrentVehicle.Exists())
 			{
-				GTA.UI.Notification.PostTicker("You're not in a vehicle.", blinking: false, showInBrief: true);
+				GTA.UI.Notification.PostTicker("You're not in a vehicle.", false, true);
 			}
 			else
 			{

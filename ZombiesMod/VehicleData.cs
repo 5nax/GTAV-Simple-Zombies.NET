@@ -30,9 +30,9 @@ public class VehicleData : ISpatial, IHandleable, IDeletable
 
 	public VehicleNeonLight[] NeonLights { get; set; }
 
-	public List<Tuple<VehicleMod, int>> Mods { get; set; }
+	public List<Tuple<VehicleModType, int>> Mods { get; set; }
 
-	public VehicleToggleMod[] ToggleMods { get; set; }
+	public VehicleToggleModType[] ToggleMods { get; set; }
 
 	public VehicleWindowTint WindowTint { get; set; }
 
@@ -46,7 +46,7 @@ public class VehicleData : ISpatial, IHandleable, IDeletable
 
 	public bool Wheels2 { get; set; }
 
-	public VehicleData(int handle, int hash, Vector3 rotation, Vector3 position, VehicleColor primaryColor, VehicleColor secondaryColor, int health, float engineHealth, float heading, VehicleNeonLight[] neonLights, List<Tuple<VehicleMod, int>> mods, VehicleToggleMod[] toggleMods, VehicleWindowTint windowTint, VehicleWheelType wheelType, Color neonColor, int livery, bool wheels1, bool wheels2)
+	public VehicleData(int handle, int hash, Vector3 rotation, Vector3 position, VehicleColor primaryColor, VehicleColor secondaryColor, int health, float engineHealth, float heading, VehicleNeonLight[] neonLights, List<Tuple<VehicleModType, int>> mods, VehicleToggleModType[] toggleMods, VehicleWindowTint windowTint, VehicleWheelType wheelType, Color neonColor, int livery, bool wheels1, bool wheels2)
 	{
 		Handle = handle;
 		Hash = hash;

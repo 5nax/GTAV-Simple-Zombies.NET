@@ -2,6 +2,7 @@ using System;
 using GTA;
 using GTA.Native;
 using ZombiesMod.Extensions;
+using CombatAttributes = ZombiesMod.Extensions.CombatAttributes;
 using ZombiesMod.Static;
 using ZombiesMod.Zombies;
 using ZombiesMod.Zombies.ZombieTypes;
@@ -22,7 +23,7 @@ public static class ZombieCreator
 		ped.DisablePainAudio(toggle: true);
 		ped.ApplyDamagePack(0f, 1f, DamagePack.BigHitByVehicle);
 		ped.ApplyDamagePack(0f, 1f, DamagePack.ExplosionMed);
-		ped.AlwaysDiesOnLowHealth = false;
+		ped.DiesOnLowHealth = false;
 		ped.SetAlertness(Alertness.Nuetral);
 		ped.SetCombatAttributes(CombatAttributes.AlwaysFight, enabled: true);
 		Function.Call((Hash)0x70A2D1137C8ED7C9uL, new InputArgument[3] { ped.Handle, 0, 0 });

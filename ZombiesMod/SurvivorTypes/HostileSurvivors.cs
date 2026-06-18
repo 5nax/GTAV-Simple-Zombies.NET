@@ -3,6 +3,7 @@ using GTA;
 using GTA.Math;
 using ZombiesMod.DataClasses;
 using ZombiesMod.Extensions;
+using CombatAttributes = ZombiesMod.Extensions.CombatAttributes;
 using ZombiesMod.Static;
 using ZombiesMod.Wrappers;
 
@@ -45,7 +46,7 @@ public class HostileSurvivors : Survivors
 		EntityEventWrapper entityEventWrapper = new EntityEventWrapper(_vehicle);
 		entityEventWrapper.Died += VehicleWrapperOnDied;
 		entityEventWrapper.Updated += VehicleWrapperOnUpdated;
-		for (int i = 0; i < vehicle.PassengerSeats + 1; i++)
+		for (int i = 0; i < vehicle.PassengerCapacity + 1; i++)
 		{
 			if (_group.MemberCount < 6 && vehicle.IsSeatFree(VehicleSeat.Any))
 			{

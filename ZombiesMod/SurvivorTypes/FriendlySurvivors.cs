@@ -3,6 +3,7 @@ using GTA;
 using GTA.Math;
 using ZombiesMod.DataClasses;
 using ZombiesMod.Extensions;
+using CombatAttributes = ZombiesMod.Extensions.CombatAttributes;
 using ZombiesMod.Static;
 using ZombiesMod.Wrappers;
 
@@ -62,7 +63,7 @@ public class FriendlySurvivors : Survivors
 				ped.SetCombatAttributes(CombatAttributes.AlwaysFight, enabled: true);
 				ped.Weapons.Give(Database.WeaponHashes[Database.Random.Next(Database.WeaponHashes.Length)], 25, equipNow: true, isAmmoLoaded: true);
 				_pedGroup.Add(ped, i == 0);
-				_pedGroup.FormationType = FormationType.Default;
+				_pedGroup.Formation = GTA.Formation.Loose;
 				_peds.Add(ped);
 				EntityEventWrapper entityEventWrapper = new EntityEventWrapper(ped);
 				entityEventWrapper.Died += EventWrapperOnDied;

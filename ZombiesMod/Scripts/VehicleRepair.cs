@@ -50,13 +50,13 @@ public class VehicleRepair : Script
 			if (Ctrl.DisabledJustPressed(Control.Attack))
 			{
 				PlayerPed.Task.ClearAllImmediately();
-				_selectedVehicle.CloseDoor(VehicleDoorIndex.Hood, instantly: false);
+				_selectedVehicle.Doors[VehicleDoorIndex.Hood].Close(instantly: false);
 				_selectedVehicle = null;
 			}
 			else if (PlayerPed.TaskSequenceProgress == -1)
 			{
 				_selectedVehicle.EngineHealth = 1000f;
-				_selectedVehicle.CloseDoor(VehicleDoorIndex.Hood, instantly: false);
+				_selectedVehicle.Doors[VehicleDoorIndex.Hood].Close(instantly: false);
 				_selectedVehicle = null;
 				PlayerInventory.Instance.AddItem(_item, -1, ItemType.Item);
 				Notifier.Show("Items: -~r~1");
@@ -64,12 +64,12 @@ public class VehicleRepair : Script
 		}
 		else
 		{
-			if (!(closestVehicle != null) || !closestVehicle.Model.IsCar || !(closestVehicle.EngineHealth < 1000f) || MenuConrtoller.MenuPool.AreAnyVisible || closestVehicle.IsUpsideDown || !closestVehicle.HasBone("engine"))
+			if (!(closestVehicle != null) || !closestVehicle.Model.IsCar || !(closestVehicle.EngineHealth < 1000f) || MenuConrtoller.MenuPool.AreAnyVisible || closestVehicle.IsUpsideDown || !closestVehicle.Bones.Contains("engine"))
 			{
 				return;
 			}
-			Vector3 boneCoord = closestVehicle.GetBoneCoord(closestVehicle.GetBoneIndex("engine"));
-			if (boneCoord == Vector3.Zero || !PlayerPed.IsInRangeOf(boneCoord, 1.5f))
+			Vector3 boneCoord = closestVehicle.Bones["engine"].Position;
+			if (boneCoord == Vector3.Zero || !PlayerPed.IsInRange(boneCoord, 1.5f))
 			{
 				return;
 			}
@@ -82,13 +82,13 @@ public class VehicleRepair : Script
 			UiExtended.DisplayHelpTextThisFrame("Press ~INPUT_CONTEXT~ to repair engine.");
 			if (Ctrl.DisabledJustPressed(Control.Context))
 			{
-				closestVehicle.OpenDoor(VehicleDoorIndex.Hood, loose: false, instantly: false);
+				closestVehicle.Doors[VehicleDoorIndex.Hood].Open(loose: false, instantly: false);
 				PlayerPed.Weapons.Select(WeaponHash.Unarmed, equipNow: true);
 				Vector3 position = boneCoord + closestVehicle.ForwardVector;
 				float heading = (closestVehicle.Position - Database.PlayerPosition).ToHeading();
 				TaskSequence taskSequence = new TaskSequence();
 				taskSequence.AddTask.ClearAllImmediately();
-				taskSequence.AddTask.GoTo(position, ignorePaths: false, 1500);
+				taskSequence.AddTask.GoTo(position, 1500);
 				taskSequence.AddTask.AchieveHeading(heading, 2000);
 				taskSequence.AddTask.PlayAnimation("mp_intro_seq@", "mp_mech_fix", 8f, -8f, _repairTimeMs, AnimationFlags.Loop, 1f);
 				taskSequence.AddTask.ClearAll();

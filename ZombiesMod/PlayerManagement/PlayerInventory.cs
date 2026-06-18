@@ -93,7 +93,7 @@ public class PlayerInventory : Script
 			}
 			if (devMode.Checked)
 			{
-				string userInput = Game.GetUserInput(WindowTitle.FMMC_KEY_TIP10, "", 12);
+				string userInput = Game.GetUserInput(WindowTitle.EnterMessage60, "", 12);
 				if (string.IsNullOrEmpty(userInput) || userInput.ToLower() != "michael")
 				{
 					devMode.Checked = false;

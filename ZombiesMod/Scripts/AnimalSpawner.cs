@@ -141,7 +141,7 @@ public class AnimalSpawner : Script, ISpawner
 						item.Delete();
 					}
 				}
-				spawnBlip.Remove();
+				spawnBlip.Delete();
 			}
 		}
 		_spawnMap.Clear();
