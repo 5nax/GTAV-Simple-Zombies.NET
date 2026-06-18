@@ -11,6 +11,7 @@ using ZombiesMod.Extensions;
 using ZombiesMod.PlayerManagement;
 using ZombiesMod.Static;
 using ZombiesMod.Wrappers;
+using ParticleEffect = ZombiesMod.DataClasses.ParticleEffect;
 
 namespace ZombiesMod.SurvivorTypes;
 

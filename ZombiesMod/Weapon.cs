@@ -1,3 +1,4 @@
+using GTA;
 using System;
 using GTA.Native;
 
@@ -10,9 +11,9 @@ public class Weapon : IWeapon
 
 	public WeaponHash Hash { get; set; }
 
-	public WeaponComponent[] Components { get; set; }
+	public WeaponComponentHash[] Components { get; set; }
 
-	public Weapon(int ammo, WeaponHash hash, WeaponComponent[] components)
+	public Weapon(int ammo, WeaponHash hash, WeaponComponentHash[] components)
 	{
 		Ammo = ammo;
 		Hash = hash;

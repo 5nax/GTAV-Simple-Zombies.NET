@@ -28,14 +28,14 @@
     <Reference Include="System.Windows.Forms" />
   </ItemGroup>
 
-  <!-- GTA modding stack. ScriptHookVDotNet2 = SHVDN v2 API surface shipped by ScriptHookVDotNetEnhanced,
-       which runs on both GTA V Legacy and Enhanced. (Stage 1: v2 baseline; migrates to SHVDN3 + LemonUI next.) -->
+  <!-- GTA modding stack: ScriptHookVDotNet v3 API shipped by ScriptHookVDotNetEnhanced,
+       which runs on both GTA V Legacy and Enhanced. UI via LemonUI (SHVDN3 build). -->
   <ItemGroup>
-    <Reference Include="ScriptHookVDotNet2">
-      <HintPath>libs\ScriptHookVDotNet2.dll</HintPath>
+    <Reference Include="ScriptHookVDotNet3">
+      <HintPath>libs\ScriptHookVDotNet3.dll</HintPath>
       <Private>false</Private>
     </Reference>
-    <PackageReference Include="NativeUI" Version="1.9.0" />
+    <PackageReference Include="LemonUI.SHVDN3" Version="2.2.0" />
   </ItemGroup>
 
 </Project>

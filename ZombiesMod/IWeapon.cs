@@ -1,3 +1,4 @@
+using GTA;
 using GTA.Native;
 
 namespace ZombiesMod;
@@ -8,5 +9,5 @@ public interface IWeapon
 
 	WeaponHash Hash { get; set; }
 
-	WeaponComponent[] Components { get; set; }
+	WeaponComponentHash[] Components { get; set; }
 }

@@ -86,16 +86,16 @@ public class Inventory
 				UI.Notify("No weapon selected!");
 				return false;
 			}
-			WeaponComponent[] array = new WeaponComponent[5]
+			WeaponComponentHash[] array = new WeaponComponentHash[5]
 			{
-				WeaponComponent.AtArSupp,
-				WeaponComponent.AtArSupp02,
-				WeaponComponent.AtPiSupp,
-				WeaponComponent.AtPiSupp02,
-				WeaponComponent.AtSrSupp
+				WeaponComponentHash.AtArSupp,
+				WeaponComponentHash.AtArSupp02,
+				WeaponComponentHash.AtPiSupp,
+				WeaponComponentHash.AtPiSupp02,
+				WeaponComponentHash.AtSrSupp
 			};
-			WeaponComponent[] array2 = array;
-			foreach (WeaponComponent weaponComponent in array2)
+			WeaponComponentHash[] array2 = array;
+			foreach (WeaponComponentHash weaponComponent in array2)
 			{
 				if (Function.Call<bool>(Hash._0x5CEE3DF569CECAB0, new InputArgument[2]
 				{

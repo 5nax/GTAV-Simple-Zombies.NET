@@ -1,3 +1,4 @@
+using GTA;
 using System;
 using GTA.Native;
 
@@ -12,9 +13,9 @@ public class WeaponInventoryItem : InventoryItemBase, IWeapon, ICraftable
 
 	public CraftableItemComponent[] RequiredComponents { get; set; }
 
-	public WeaponComponent[] Components { get; set; }
+	public WeaponComponentHash[] Components { get; set; }
 
-	public WeaponInventoryItem(int amount, int maxAmount, string id, string description, int ammo, WeaponHash weaponHash, WeaponComponent[] weaponComponents)
+	public WeaponInventoryItem(int amount, int maxAmount, string id, string description, int ammo, WeaponHash weaponHash, WeaponComponentHash[] weaponComponents)
 		: base(amount, maxAmount, id, description)
 	{
 		Ammo = ammo;
