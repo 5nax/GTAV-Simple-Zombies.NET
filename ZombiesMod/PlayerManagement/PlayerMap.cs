@@ -37,7 +37,7 @@ public class PlayerMap : Script
 	{
 		if (_map == null)
 		{
-			Map map = Serializer.Deserialize<Map>("./scripts/Map.dat");
+			Map map = Serializer.Deserialize<Map>(Config.MapFilePath);
 			if (map == null)
 			{
 				map = new Map();
@@ -45,7 +45,7 @@ public class PlayerMap : Script
 			_map = map;
 			_map.ListChanged += delegate
 			{
-				Serializer.Serialize("./scripts/Map.dat", _map);
+				Serializer.Serialize(Config.MapFilePath, _map);
 			};
 			LoadProps();
 		}

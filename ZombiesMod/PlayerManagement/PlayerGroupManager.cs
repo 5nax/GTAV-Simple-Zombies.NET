@@ -187,7 +187,7 @@ public class PlayerGroupManager : Script
 		{
 			return;
 		}
-		PedCollection pedCollection = Serializer.Deserialize<PedCollection>("./scripts/Guards.dat");
+		PedCollection pedCollection = Serializer.Deserialize<PedCollection>(Config.GuardsFilePath);
 		if (pedCollection == null)
 		{
 			pedCollection = new PedCollection();
@@ -195,7 +195,7 @@ public class PlayerGroupManager : Script
 		_peds = pedCollection;
 		_peds.ListChanged += delegate
 		{
-			Serializer.Serialize("./scripts/Guards.dat", _peds);
+			Serializer.Serialize(Config.GuardsFilePath, _peds);
 		};
 		_peds.ToList().ForEach(delegate(PedData data)
 		{
@@ -239,7 +239,7 @@ public class PlayerGroupManager : Script
 				_peds.Add(data);
 			}
 		});
-		Serializer.Serialize("./scripts/Guards.dat", _peds);
+		Serializer.Serialize(Config.GuardsFilePath, _peds);
 		Notifier.Show("~b~Guards~s~ saved!");
 	}
 

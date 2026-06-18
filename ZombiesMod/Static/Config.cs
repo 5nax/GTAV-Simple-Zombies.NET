@@ -28,9 +28,9 @@ public class Config
 			{
 				File.Delete("./scripts/ZombiesMod.ini");
 			}
-			if (File.Exists("./scripts/Inventory.dat"))
+			if (File.Exists(Config.InventoryFilePath))
 			{
-				File.Delete("./scripts/Inventory.dat");
+				File.Delete(Config.InventoryFilePath);
 			}
 			Notifier.Show($"Updating Simple Zombies to version ~g~{VersionId}~s~. Overwritting the " + "inventory file since there are new items.");
 			scriptSettings.SetValue("mod", "version_id", VersionId);

@@ -55,11 +55,18 @@ public class VehicleRepair : Script
 			}
 			else if (PlayerPed.TaskSequenceProgress == -1)
 			{
-				_selectedVehicle.EngineHealth = 1000f;
-				_selectedVehicle.Doors[VehicleDoorIndex.Hood].Close(instantly: false);
+				// Only repair + consume a kit if the vehicle is still valid and the player
+				// is still next to it (the sequence ending could mean it was interrupted).
+				bool finishedAtVehicle = _selectedVehicle.Exists()
+					&& PlayerPed.Position.DistanceTo(_selectedVehicle.Position) < 6f;
+				if (finishedAtVehicle)
+				{
+					_selectedVehicle.EngineHealth = 1000f;
+					_selectedVehicle.Doors[VehicleDoorIndex.Hood].Close(instantly: false);
+					PlayerInventory.Instance.AddItem(_item, -1, ItemType.Item);
+					Notifier.Show("Items: -~r~1");
+				}
 				_selectedVehicle = null;
-				PlayerInventory.Instance.AddItem(_item, -1, ItemType.Item);
-				Notifier.Show("Items: -~r~1");
 			}
 		}
 		else

@@ -60,7 +60,7 @@ public class PlayerInventory : Script
 		_inventoryKey = base.Settings.GetValue<Keys>("keys", "inventory_key", _inventoryKey);
 		base.Settings.SetValue<Keys>("keys", "inventory_key", _inventoryKey);
 		base.Settings.Save();
-		Inventory inventory = Serializer.Deserialize<Inventory>("./scripts/Inventory.dat");
+		Inventory inventory = Serializer.Deserialize<Inventory>(Config.InventoryFilePath);
 		if (inventory == null)
 		{
 			inventory = new Inventory(MenuType.Player);
@@ -112,7 +112,7 @@ public class PlayerInventory : Script
 			{
 				Notifier.Show("Developer Mode: ~g~Activated~s~");
 			}
-			Serializer.Serialize("./scripts/Inventory.dat", _inventory);
+			Serializer.Serialize(Config.InventoryFilePath, _inventory);
 		};
 		_mainMenu.Add(editMode);
 		_mainMenu.Add(mainMenuItem);
@@ -120,7 +120,7 @@ public class PlayerInventory : Script
 		_inventory.ItemUsed += InventoryOnItemUsed;
 		_inventory.AddedItem += delegate
 		{
-			Serializer.Serialize("./scripts/Inventory.dat", _inventory);
+			Serializer.Serialize(Config.InventoryFilePath, _inventory);
 		};
 		base.Tick += OnTick;
 		base.KeyUp += new KeyEventHandler(OnKeyUp);
