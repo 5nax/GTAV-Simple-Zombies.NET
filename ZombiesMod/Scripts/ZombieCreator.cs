@@ -72,6 +72,12 @@ public static class ZombieCreator
 			ped.Health = health;
 			return new Screamer(ped.Handle);
 		}
+		if (special < GameConfig.BruteChance + GameConfig.CrawlerChance + GameConfig.BloaterChance + GameConfig.SpitterChance + GameConfig.ScreamerChance + GameConfig.BlindStalkerChance)
+		{
+			ped.MaxHealth = health;
+			ped.Health = health;
+			return new Stalker(ped.Handle);
+		}
 
 		// Most of the dead are slow shamblers; only a few sprint, more so at night.
 		float num = GameConfig.RunnerChanceDay;

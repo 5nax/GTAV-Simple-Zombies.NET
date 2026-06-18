@@ -234,11 +234,14 @@ public abstract class ZombiePed : IEquatable<Ped>
 		_currentMovementUpdateTime = DateTime.UtcNow + new TimeSpan(0, 0, 0, 5);
 	}
 
+	// Blind variants (Stalker) override this to react to sound only — sight ignored.
+	protected virtual bool CanSee => true;
+
 	private void GetTarget()
 	{
 		Ped[] spatials = World.GetNearbyPeds(_ped, SensingRange).Where(IsGoodTarget).ToArray();
 		Ped closest = World.GetClosest(Position, spatials);
-		if (closest != null && (_ped.HasClearLineOfSight(closest, VisionDistance) || CanHearPed(closest)))
+		if (closest != null && ((CanSee && _ped.HasClearLineOfSight(closest, VisionDistance)) || CanHearPed(closest)))
 		{
 			Target = closest;
 		}
