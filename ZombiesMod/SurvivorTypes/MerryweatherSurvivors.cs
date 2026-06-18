@@ -158,7 +158,7 @@ public class MerryweatherSurvivors : Survivors
 		_particle = WorldExtended.CreateParticleEffectAtCoord(coord, "exp_grd_flare");
 		_particle.Color = Color.LightGoldenrodYellow;
 		int num = Database.Random.Next(3, 6);
-		for (int i = 0; i <= num; i++)
+		for (int i = 0; i < num; i++)
 		{
 			Vector3 position = spawnPoint.Around(10f);
 			PedHash pedHash = _pedHashes[Database.Random.Next(_pedHashes.Length)];
@@ -182,7 +182,9 @@ public class MerryweatherSurvivors : Survivors
 				entityEventWrapper.Died += PedWrapperOnDied;
 			}
 		}
-		World.CreateVehicle("mesa3", World.GetNextPositionOnStreet(_prop.Position.Around(25f)));
+		// Flavor vehicle near the drop. Mark it non-needed so the engine despawns it
+		// naturally instead of leaking a persistent vehicle that nothing tracks.
+		World.CreateVehicle("mesa3", World.GetNextPositionOnStreet(_prop.Position.Around(25f)))?.MarkAsNoLongerNeeded();
 		Notifier.Show(string.Format("~y~Merryweather~s~ {0} drop nearby.", (_dropType == DropType.Loot) ? "loot" : "weapons"));
 	}
 
@@ -219,7 +221,7 @@ public class MerryweatherSurvivors : Survivors
 		{
 			int num = Database.Random.Next(3, 5);
 			int num2 = 0;
-			for (int i = 0; i <= num; i++)
+			for (int i = 0; i < num; i++)
 			{
 				WeaponHash[] array = ((WeaponHash[])Enum.GetValues(typeof(WeaponHash))).Where(IsGoodHash).ToArray();
 				if (array.Length != 0)

@@ -114,8 +114,14 @@ public class Loot247 : Script, ISpawner
 		while (_blips.Count > 0)
 		{
 			Blip blip = _blips[0];
-			blip.Delete();
+			if (blip != null && blip.Exists())
+			{
+				blip.Delete();
+			}
 			_blips.RemoveAt(0);
 		}
+		// Reset looted-shelf tracking so the list can't grow unbounded over a long
+		// session (and shelves restock when the system is re-enabled).
+		_lootedShelfes.Clear();
 	}
 }

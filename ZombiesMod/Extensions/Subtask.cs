@@ -13,7 +13,6 @@ public enum Subtask
 	RemovingHelmet = 92,
 	Dead = 97,
 	MeleeCombat = 130,
-	HittingMelee = 130,
 	SittingInVehicle = 150,
 	DrivingWandering = 151,
 	ExitingVehicle = 152,

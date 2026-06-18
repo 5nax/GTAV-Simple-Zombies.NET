@@ -328,10 +328,6 @@ public class PlayerInventory : Script
 		}
 	}
 
-	private void Controller()
-	{
-	}
-
 	public bool AddItem(InventoryItemBase item, int amount, ItemType type)
 	{
 		return item != null && _inventory.AddItem(item, amount, type);

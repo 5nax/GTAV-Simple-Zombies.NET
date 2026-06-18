@@ -49,7 +49,7 @@ public class FriendlySurvivors : Survivors
 		{
 			return;
 		}
-		for (int i = 0; i <= num; i++)
+		for (int i = 0; i < num; i++)
 		{
 			Ped ped = World.CreateRandomPed(spawnPoint.Around(5f));
 			if (!(ped == null))
